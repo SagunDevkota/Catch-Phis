@@ -5,5 +5,3 @@ chrome.runtime.onMessage.addListener((message) => {
       document.getElementById("message").innerHTML = message.popupMessage
     }
   });
-
-console.log("hi")

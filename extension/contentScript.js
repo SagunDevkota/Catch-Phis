@@ -8,9 +8,11 @@ chrome.runtime.onMessage.addListener(async function(message, sender, sendRespons
       request_anchor_url_stats = getRequestAnchorURL()
       data = {}
       data['url'] = window.location.href
+      data['origin_url'] = message.url
       data['favicon'] = getFavicon()
       data['request_url'] = request_anchor_url_stats[0]
       data['anchor_url'] = request_anchor_url_stats[1]
+      data['meta_script_link'] = getMetaScriptLink()
       data['server_form_handler'] = server_form_handler()
       data['mail_to'] = mail_to()
       data['redirects'] = message.count
@@ -18,14 +20,26 @@ chrome.runtime.onMessage.addListener(async function(message, sender, sendRespons
       const onMouseOverValue = await on_mouse_over();
       data['on_mouse_over'] = onMouseOverValue;
       console.log(data)
-      // let p = fetch("https://cat-fact.herokuapp.com/facts").
-      //         then((response)=>{
-      //           return response.json()
-      //         }).
-      //         then((value)=>{
-      //           return value
-      //         })
-      // console.log(await p)
+      let p = fetch("https://asp-adequate-tortoise.ngrok-free.app", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(data) // Add your JSON data here
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log(data);
+            })
+            .catch(error => {
+                console.error('There was a problem with your fetch operation:', error);
+            });
+      console.log(await p)
   }
 });
 
@@ -65,6 +79,51 @@ function getRequestAnchorURL(){
   }
   console.log(external_links,internal_anchors,total_urls)
   return [external_links/total_urls,(external_links+internal_anchors)/total_urls]
+}
+
+function getMetaScriptLink(){
+  const meta = Array.from(document.querySelectorAll("meta"))
+  const script = Array.from(document.querySelectorAll("script"))
+  const link = Array.from(document.querySelectorAll("link"))
+  let total_urls = 0
+  let internal_urls = 0
+  for (let i=0; i<meta.length; i++){
+    try{
+      url = new URL(meta[i].content)
+      total_urls++
+      if(isInternalLink(url.href)){
+        internal_urls++
+      }
+    }catch{
+      continue
+    }
+  }
+
+  for (let i=0; i<link.length; i++){
+    try{
+      url = new URL(link[i].href)
+      total_urls++
+      if(isInternalLink(url.href)){
+        internal_urls++
+      }
+    }catch{
+      continue
+    }
+  }
+
+  for (let i=0; i<script.length; i++){
+    try{
+      url = new URL(script[i].src)
+      total_urls++
+      if(isInternalLink(url.href)){
+        internal_urls++
+      }
+    }catch{
+      continue
+    }
+  }
+  console.log(internal_urls,total_urls)
+  return internal_urls/total_urls
 }
 
 function getFavicon() {
