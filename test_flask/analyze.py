@@ -1,242 +1,128 @@
 import urllib
 import requests
 import whois
-from datetime import datetime
-import pandas as pd
-import aiohttp
-import asyncio
+import datetime
+
+# todo:
+# no_of_letters_in_url
+# no_of_other_special_char_in_url
+# no of external ref
+
+# ask
+# Is no of css and js inclusive of <style> and <script> tag within the doc
+
+# from extension
+# url
+# has_title
+# 
 
 class Analyze:
     def __init__(self,data):
         self.data = data
         self.url_parser = urllib.parse.urlparse(data["url"])
-        self.domain = self.url_parser.netloc
-        self.valid = True
-        try:
-            self.whois_ = whois.whois(data['url'])
-        except:
-            self.valid = False
+        self.domain = self.url_parser.netloc.replace("www.","")
+        self.scheme = self.url_parser.scheme
+        self.whois_data = whois.whois(self.domain)
+        # self.valid = True
+        # try:
+        #     self.whois_ = whois.whois(data['url'])
+        # except:
+        #     self.valid = False
 
-    async def get_response(self, url,headers=None):
-        async with aiohttp.ClientSession() as session:
-            async with session.get(url,headers=headers,ssl=False) as response:
-                return await response.json()
-
-    def contains_IP(self):
+    def url_length(self):
+        return len(self.data['url'])
+    
+    def domain_length(self):
+        return len(self.domain)
+    
+    def is_domain_ip(self):
         parts = self.domain.split('.')
         if len(parts) == 4 and all(part.isdigit() for part in parts):
-            return -1
-        else:
             return 1
-        
-    def url_length(self):
-        if(len(self.domain) > 75):
-            return -1
-        elif(len(self.domain) > 53):
+        else:
             return 0
-        else:
-            return 1
-        
-    def is_shortened(self):
-        origin_url = self.data['origin_url']
-        url = self.data['url']
-        if url != origin_url:
-            if(".".join(urllib.parse.urlparse(origin_url).netloc.split(".")[-2:]) == ".".join(urllib.parse.urlparse(url).netloc.split(".")[-2:])):
-                return 1
-            else:
-                return -1
-        return 1
+
+    def no_of_subdomain(self):
+        if(str(self.domain).startswith("www.")):
+            return len(self.domain[4:].split("."))-1
+        return len(self.domain.split("."))-1
     
-    def url_contains_at_symbol(self):
-        if("@" in self.data['url']):
-            return -1
-        else:
-            return 1
-        
-    def url_contains_db_slash(self):
-        return 1 if len(self.data['url'].split("//"))==2 else -1
-        
-    def url_contains_hyphen(self):
-        return -1 if "-" in self.domain else 1
+    def no_of_letters_in_url(self):
+        unique_chars = set(self.data['url'])
+        return len(unique_chars)
+
+    def letter_ratio_in_url(self):
+        return format(self.no_of_letters_in_url()/self.url_length(),'.3f')
     
-    def sub_domain_count(self):
-        count = (self.domain.count(".")-1)
-        if (count>2):
-            return -1
-        elif (count>1):
-            return 0
-        else:
-            return 1
-        
-    def contains_https(self):
-        return 1 if "https" == self.url_parser.scheme else -1
+    def no_of_digits_in_url(self):
+        count = 0
+        for _ in self.data['url']:
+            if(_.isdigit()):
+                count+=1
+        return count
     
-    def get_domain_age(self):
-        creation_date = self.whois_.creation_date[0] if type(self.whois_.creation_date)==list else self.whois_.creation_date
-        return 1 if (datetime.now() - creation_date).days>365 else -1
+    def digit_ratio_in_url(self):
+        return format(self.no_of_digits_in_url()/self.url_length(),'.3f')
     
-    def get_domain_registration_length(self):
-        updated_date = self.whois_.updated_date[0] if type(self.whois_.updated_date)==list else self.whois_.updated_date
-        expiration_date = self.whois_.expiration_date[0] if type(self.whois_.expiration_date)==list else self.whois_.expiration_date
+    def no_of_equal_in_url(self):
+        return self.data["url"].count("=")
+    
+    def no_of_question_mark_in_url(self):
+        return self.data["url"].count("?")
+    
+    def no_of_ampersand_in_url(self):
+        return self.data["url"].count("&")
+    
+    def no_of_other_special_char_in_url(self):
+        special_characters = ['!', '@', '#', '$', '%', '^', '*', '(', ')', '-', '_', '+', '`', '~', '[', ']', '{', '}', '|', '\\', ';', ':', "'", '"', ',', '.', '/', '<', '>', '?']
+        count = 0
+        url = self.data["url"][8:] if self.data["url"].startswith("https://") else self.data["url"][7:]
+        domain = url[4:] if self.domain.startswith("www.") else url
+        for char in domain:
+            if char in special_characters and char not in ['=', '?', '&', '/']:
+                count += 1
+        return count
+    
+    def special_char_symbol_ratio_in_url(self):
+        return format((self.no_of_equal_in_url()+self.no_of_ampersand_in_url()+self.no_of_other_special_char_in_url()+self.no_of_question_mark_in_url())/self.url_length(),'.3f')
+    
+    def has_https(self):
+        return 1 if "https" == self.url_parser.scheme else 0
+
+    def has_robots(self):
+        url = self.scheme+"://"+self.domain+"/robots.txt"
         try:
-            return 1 if (expiration_date - updated_date).days>365 else -1
-        except TypeError:
-            return -1
-    
-    def has_favicon(self):
-        if(self.data["favicon"] is None):
-            return -1
-        return 1
-    
-    def anchor_url(self):
-        anchor = self.data['anchor_url']
-        try:
-            if(anchor>=.31 and anchor<=.67):
-                return 0
-            if(anchor<.31):
+            response = requests.get(url)
+            if(response.status_code == 200):
                 return 1
-        except TypeError:
-            return -1
-        return -1
-    
-    def request_url(self):
-        anchor = self.data['request_url']
-        try:
-            if(anchor>=.22 and anchor<=.61):
-                return 0
-            if(anchor<.22):
-                return 1
-        except TypeError:
-            return -1
-        return -1
-    
-    def redirects(self):
-        if(self.data['redirects']<=1):
-            return 1
-        if(self.data['redirects']>=4):
-            return -1
+        except:
+            pass
         return 0
-
-    def meta_script_link(self):
-        meta_script_link = self.data['meta_script_link']
-        try:
-            if(meta_script_link>=.17 and meta_script_link<=.81):
-                return 0
-            if(meta_script_link<.17):
-                return 1
-        except TypeError:
-            return -1
-        return -1
     
-    def get_port(self):
-        if isinstance((self.url_parser.port),type(None)):
-            return 1
-        return -1 if self.url_parser.port in [443,80,8080] else -1
-    
-    def is_abnormal_url(self):
-        domain_name = self.whois_.domain_name[0] if type(self.whois_.domain_name) == list else self.whois_.domain_name
-        return 1 if(domain_name.lower() in self.data['url'].lower()) else -1
-    
-    def is_valid_dns_record_present(self):
-        return 1 if self.valid else -1
-    
-    def get_host(self):
-        df = pd.read_csv("test_flask/domain_type.csv")
-        chunks = self.domain.split(".")[::-1]
-        url = ""
-        previous_type = None
-        for chunk in chunks:
-            data = df[df["Domain"] == chunk]
-            if(len(data) == 0):
-                return chunk+url
-            data = data.iloc[0]
-            if(data["Type"] == previous_type):
-                return chunk+url
-            url = "."+chunk+url
-            previous_type = data["Type"]
-        return url
-    
-    async def check_global_ranking(self):
-        async with aiohttp.ClientSession() as session:
-            async with session.get(f"https://api.similarweb.com/v1/similar-rank/{self.get_host()}/rank?api_key=7965dc2a27124af187e632ced8539bcf", ssl=False) as response:
-                if response.status == 200:
-                    response_json = await response.json()
-                    rank = response_json['similar_rank']["rank"]
-                    if rank < 100000:
-                        return 1
-                    else:
-                        return 0
-                else:
-                    return -1
-        
-    async def check_backlinks(self):
-        response = await self.get_response("https://app.neilpatel.com/api/get_token?debug=app_norecaptcha")
-        token = response['token']
-        headers = {
-            "Authorization": f"Bearer {token}"
-        }
-        response = await self.get_response(f"https://app.neilpatel.com/api/backlinks_overview?domain={self.get_host()}&mode=domain",headers=headers)
-        backlinks = response["backlinks"]
-        if backlinks > 2:
-            return 1
-        elif backlinks < 1:
-            return -1
+    def is_domain_new(self):
+        creation_date = self.whois_data.creation_date[0] if type(self.whois_data.creation_date)==list else self.whois_data.creation_date
+        if(creation_date):
+            print(False if (datetime.datetime.now() - creation_date).days>90 else True)
+            return False if (datetime.datetime.now() - creation_date).days>90 else True
         else:
-            return 0
+            return True
         
-    async def result(self):
-        self.data['contains_IP'] = self.contains_IP()
+    def result(self):
         self.data['url_length'] = self.url_length()
-        self.data['is_shortened'] = self.is_shortened()
-        self.data['url_contains_at_symbol'] = self.url_contains_at_symbol()
-        self.data['url_contains_db_slash'] = self.url_contains_db_slash()
-        self.data['url_contains_hyphen'] = self.url_contains_hyphen()
-        self.data['sub_domain_count'] = self.sub_domain_count()
-        self.data['contains_https'] = self.contains_https()
-        self.data['get_domain_age'] = self.get_domain_age()
-        self.data['get_domain_registration_length'] = self.get_domain_registration_length()
-        self.data['favicon'] = self.has_favicon()
-        self.data["anchor_url"] = self.anchor_url()
-        self.data["request_url"] = self.request_url()
-        self.data['redirects'] = self.redirects()
-        self.data["meta_script_link"] = self.meta_script_link()
-        self.data['get_port'] = self.get_port()
-        self.data['is_abnormal_url'] = self.is_abnormal_url()
-        self.data['is_valid_dns_record_present'] = self.is_valid_dns_record_present()
-        self.data['check_global_ranking'] = await self.check_global_ranking()
-        self.data['check_backlinks'] = await self.check_backlinks()
+        self.data['domain_length'] = self.domain_length()
+        self.data['is_domain_ip'] = self.is_domain_ip()
+        self.data['no_of_subdomain'] = self.no_of_subdomain()
+        self.data['no_of_letters_in_url'] = self.no_of_letters_in_url()
+        self.data['letter_ratio_in_url'] = self.letter_ratio_in_url()
+        self.data['no_of_digits_in_url'] = self.no_of_digits_in_url()
+        self.data['digit_ratio_in_url'] = self.digit_ratio_in_url()
+        self.data['no_of_equal_in_url'] = self.no_of_equal_in_url()
+        self.data['no_of_question_mark_in_url'] = self.no_of_question_mark_in_url()
+        self.data['no_of_ampersand_in_url'] = self.no_of_ampersand_in_url()
+        self.data['no_of_other_special_char_in_url'] = self.no_of_other_special_char_in_url()
+        self.data['special_char_symbol_ratio_in_url'] = self.special_char_symbol_ratio_in_url()
+        self.data['has_https'] = self.has_https()
+        # self.data['has_favicon'] = self.has_favicon()
+        self.data['has_robots'] = self.has_robots()
+        self.data['is_domain_new'] = self.is_domain_new()
         return self.data
-        
-# analyze = Analyze({
-#     "anchor_url" : 0.2,
-#     "favicon" : "https://ssl.gstatic.com/colaboratory-static/common/a01fcfa49b15ed5edf590b766bd247d1/img/favicon.ico",
-#     "iframe" : -1,
-#     "mail_to" : 1,
-#     "on_mouse_over" : 1,
-#     "redirects" : 1,
-#     "request_url" : 0,
-#     "server_form_handler" : 1,
-#     "url" : "https://colab.research.google.com/drive/1DrlPkDg2iEt_rwOLADCNhCe854UjVZ6u#scrollTo=dga-OQmr45VG",
-#     "origin_url": "https://grabify.link/NV8X47"
-# })
-# print(analyze.result())
-
-# async def main():
-#     now = datetime.now()
-#     data = {
-#         "anchor_url" : 0.2,
-#         "favicon" : "https://ssl.gstatic.com/colaboratory-static/common/a01fcfa49b15ed5edf590b766bd247d1/img/favicon.ico",
-#         "iframe" : -1,
-#         "mail_to" : 1,
-#         "on_mouse_over" : 1,
-#         "redirects" : 1,
-#         "request_url" : 0,
-#         "server_form_handler" : 1,
-#         "url" : "https://colab.research.google.com/drive/1DrlPkDg2iEt_rwOLADCNhCe854UjVZ6u#scrollTo=dga-OQmr45VG",
-#         "origin_url": "https://grabify.link/NV8X47"
-#     }
-#     analyze_instance = Analyze(data)   
-#     print(await analyze_instance.result())
-#     print(datetime.now()-now)
-
-# asyncio.run(main())
