@@ -10,3 +10,4 @@ notebooks/
 *.ipynb
 *.h5
 file.txt
+.replit
