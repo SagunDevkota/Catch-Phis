@@ -31,8 +31,25 @@ chrome.runtime.onMessage.addListener(async function(message, sender, sendRespons
       // data['empty_external_to_total'] = empty_external_to_total()
       // const onMouseOverValue = await on_mouse_over();
       // data['on_mouse_over'] = onMouseOverValue;
+      let base_url = ""
+      await fetch(chrome.runtime.getURL('file.txt'))
+        .then(response => {
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          return response.text();
+        })
+        .then(data => {
+          // `data` contains the contents of the text file
+          base_url = data
+          console.log(base_url)
+        })
+        .catch(error => {
+          console.error('Error:', error);
+        });
+      console.log(base_url)
       console.log(data)
-      let p = fetch("https://asp-adequate-tortoise.ngrok-free.app", {
+      let p = fetch(base_url, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
