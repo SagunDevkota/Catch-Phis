@@ -11,6 +11,10 @@ chrome.runtime.onMessage.addListener(async function(message, sender, sendRespons
       // data['origin_url'] = message.url
       data['favicon'] = getFavicon() // corrected
       data['has_title'] = has_title() //corrected
+      data['title'] = title()
+      data['has_copyright_info'] = has_copyright_info()
+      data['has_social_media_links'] = has_social_media_links()
+      data['has_description'] = has_description()
       // data['request_url'] = request_anchor_url_stats[0]
       // data['anchor_url'] = request_anchor_url_stats[1]
       // data['meta_script_link'] = getMetaScriptLink()
@@ -23,7 +27,8 @@ chrome.runtime.onMessage.addListener(async function(message, sender, sendRespons
       data['no_of_images'] = no_of_images() //corrected
       data['no_of_css'] = no_of_css() // corrected
       data['no_of_js'] = no_of_js() // corrected
-      data['no_of_external_ref'] = no_of_external_ref() //corrected
+      data['no_of_self_ref'] = no_of_self_ref() //corrected
+      // data['empty_external_to_total'] = empty_external_to_total()
       // const onMouseOverValue = await on_mouse_over();
       // data['on_mouse_over'] = onMouseOverValue;
       console.log(data)
@@ -62,7 +67,11 @@ function isInternalLink(url) {
   }
 }
 
-function no_of_external_ref(){
+function isEmptyLink(url) {
+  return !url || url.trim() === '#';
+}
+
+function no_of_self_ref(){
   count = 0
   a_links = document.getElementsByTagName('a')
   img_links = document.getElementsByTagName('img')
@@ -95,6 +104,40 @@ function no_of_external_ref(){
     }
   }
   return count
+}
+
+function empty_external_to_total() {
+  let no_of_empty = 0;
+  let no_of_external = 0;
+  let no_of_internal = 0;
+
+  const a_links = document.getElementsByTagName('a');
+
+  // Helper function to count links
+  function countLinks(links, attribute) {
+    for (let i = 0; i < links.length; i++) {
+      const url = links[i][attribute];
+      if (isEmptyLink(url)) {
+        no_of_empty += 1;
+      } else if (isInternalLink(url)) {
+        no_of_internal += 1;
+      } else {
+        no_of_external += 1;
+      }
+    }
+  }
+
+  countLinks(a_links, 'href');
+
+  const numerator = no_of_empty + no_of_external;
+  const denominator = no_of_internal + no_of_empty + no_of_external;
+  let ratio = 1
+  try{
+    ratio = denominator === 0 ? 0 : numerator / denominator;
+  }catch{
+  }
+
+  return ratio;
 }
 
 function isInternalAnchorLink(url) {
@@ -202,26 +245,14 @@ function getFavicon() {
   }
 }
 
-function has_external_form_submit(){
-  forms = document.getElementsByTagName('form')
-  for(let i = 0;i<forms.length;i++){
-    count1 = 0
-    count0 = 0
-    try{
-      url = new URL(forms[i].action)
-      if(url.origin == 'null'){
-        return 0
+function has_external_form_submit() {
+  forms = document.getElementsByTagName('form');
+  for (let i = 0; i < forms.length; i++) {
+      if (forms[i].querySelector('button[type="submit"]')) {
+          return 1;
       }
-    }catch{
-      return 0
-    }
-    if(forms[i].action){
-      if(!isInternalLink(forms[i].action)){
-        return 1
-      }
-    }
   }
-  return 0
+  return 0;
 }
 
 function has_hidden_field(){
@@ -277,6 +308,108 @@ function has_title(){
     return 1
   }
   return 0
+}
+
+function title(){
+  title = document.getElementsByTagName('title')
+  if(title.length>0){
+    return title[0].textContent
+  }
+  return ""
+}
+
+function findSubstringIndex(list, substring) {
+    for (let i = 0; i < list.length; i++) {
+        if (list[i].indexOf(substring) !== -1) {
+            return i; // Return the index of the first occurrence of the substring in the string
+        }
+    }
+    return -1; // Return -1 if the substring is not found in any of the strings
+}
+
+function traverseElements(element, depth, searchTexts,found_elements) {
+    fixed_elements = ["footer","nav"]
+    if (depth === 0 || !element || !element.childNodes) {
+        return;
+    }
+    
+    // Traverse through child nodes
+    for (let i = 0; i < element.childNodes.length; i++) {
+        let child = element.childNodes[i];
+        
+        // Check if it's an element node
+        if (child.nodeType === 1) {
+            for (let j=0;j<searchTexts.length;j++){
+                searchText = searchTexts[j]
+                if(child.textContent.toLowerCase().indexOf(searchText) === -1 || child.tagName.toLowerCase() === "script"){
+                    continue
+                }
+                if(found_elements.includes(child.parentElement)){
+                    found_elements.pop(child.parentElement)
+                }
+                if(found_elements.includes(child)){
+                    continue
+                }
+                if(fixed_elements.includes(child.tagName.toLowerCase())){
+                    // console.log(child,"here")
+                    found_elements.push(child)
+                    break
+                }
+                if(findSubstringIndex(child.classList,searchText)){
+                    // console.log(child,"here2")
+                    found_elements.push(child)
+                }
+                // Recursive call for children elements
+                traverseElements(child, depth - 1,searchTexts,found_elements);
+            }
+        }
+    }
+    return found_elements
+}
+
+function has_copyright_info(){
+  let found_elements = []
+  if(traverseElements(document.head, 25,["copyright","©"],found_elements).length>0){
+    return 1
+  }
+  if(traverseElements(document.body, 25,["copyright","©"],found_elements).length>0){
+    return 1
+  }
+  return 0
+}
+
+function has_social_media_links(){
+  const socialMediaLinks = [];
+    
+    // List of common social media domains
+    const socialMediaDomains = ['facebook.com', 'twitter.com', 'instagram.com', 'linkedin.com'];
+
+    // Query all anchor elements on the webpage
+    const anchorElements = document.querySelectorAll('a');
+
+    // Iterate through each anchor element
+    anchorElements.forEach(anchor => {
+        // Check if the href attribute contains any of the social media domains
+        socialMediaDomains.forEach(domain => {
+            if (anchor.href.includes(domain)) {
+                socialMediaLinks.push(anchor.href);
+            }
+        });
+    });
+    if(socialMediaLinks.length>0){
+      return 1;
+    }else{
+      return 0;
+    }
+}
+
+function has_description(){
+  items = document.querySelectorAll("meta[name=description]")
+  if(items.length>0){
+    return 1
+  }else{
+    return 0
+  }
 }
 
 function mail_to(){

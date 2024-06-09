@@ -1,7 +1,8 @@
 import urllib
 import requests
-import whois
 import datetime
+import re
+from trie import similar_domain_search
 
 # todo:
 # no_of_letters_in_url
@@ -22,12 +23,7 @@ class Analyze:
         self.url_parser = urllib.parse.urlparse(data["url"])
         self.domain = self.url_parser.netloc.replace("www.","")
         self.scheme = self.url_parser.scheme
-        self.whois_data = whois.whois(self.domain)
-        # self.valid = True
-        # try:
-        #     self.whois_ = whois.whois(data['url'])
-        # except:
-        #     self.valid = False
+        # self.whois_data = whois.whois(self.domain)
 
     def url_length(self):
         return len(self.data['url'])
@@ -107,7 +103,45 @@ class Analyze:
         else:
             return True
         
-    def result(self):
+    def domain_title_match_score(self):
+        # Remove 'https', 'http', 'www', and TLD from URL to get root domain
+        title = self.data['title']
+        domain = self.domain
+        t_set = set(title.lower().split())
+        txt_url = self.root_domain(domain.lower())
+        return self.url_title_match_score_helper(t_set, txt_url)
+
+    def root_domain(self,url):
+        return url
+
+    def url_title_match_score_helper(self,t_set, txt_url):
+        score = 0
+        base_score = 100 / len(txt_url)
+        for element in t_set:
+            if txt_url.find(element) >= 0:
+                n = len(element)
+                score += base_score * n
+                txt_url = txt_url.replace(element, " ")
+            if score > 99.9:
+                score = 100
+                break
+        return score
+
+    def char_continuous_rate(self):
+        text = self.domain.split(".")[:-1]
+        text = ".".join(text)
+        # Find the longest sequence of alphabets
+        longest_alpha = max(re.findall(r'[a-zA-Z]+', text), key=len, default='')
+        
+        # Find the longest sequence of digits
+        longest_digit = max(re.findall(r'\d+', text), key=len, default='')
+        
+        # Find the longest sequence of special characters
+        longest_special = max(re.findall(r'\W+', text), key=len, default='')
+        
+        return (len(longest_alpha)+len(longest_digit)+len(longest_special))/len(text)
+
+    def result(self,trie):
         self.data['url_length'] = self.url_length()
         self.data['domain_length'] = self.domain_length()
         self.data['is_domain_ip'] = self.is_domain_ip()
@@ -124,5 +158,9 @@ class Analyze:
         self.data['has_https'] = self.has_https()
         # self.data['has_favicon'] = self.has_favicon()
         self.data['has_robots'] = self.has_robots()
-        self.data['is_domain_new'] = self.is_domain_new()
+        # self.data['is_domain_new'] = self.is_domain_new()
+        self.data['domain_title_match_score'] = self.domain_title_match_score()
+        self.data['url_similarity_index'] = similar_domain_search(self.domain,trie)
+        self.data["char_continuous_rate"] = self.char_continuous_rate()
+        self.data["domain"] = self.domain
         return self.data

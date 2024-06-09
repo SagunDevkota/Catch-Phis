@@ -1,16 +1,26 @@
-from sklearn.preprocessing import StandardScaler
-def get_predictions(pca_models:dict,data):
-    key_list = ["url_length","domain_length","is_domain_ip","no_of_subdomain","no_of_letters_in_url","letter_ratio_in_url","no_of_digits_in_url",
-    "digit_ratio_in_url","no_of_equal_in_url","no_of_question_mark_in_url","no_of_ampersand_in_url","no_of_other_special_char_in_url","special_char_symbol_ratio_in_url","has_https","has_title","favicon",
-    "has_robots","iframe","has_external_form_submit","has_hidden_field","has_password_field","no_of_images","no_of_css","no_of_js","no_of_external_ref","is_domain_new"]
-    values = [float(data[key]) for key in key_list]
+import pandas as pd
+def get_predictions(models:dict,data):
+    key_list = ['has_social_media_links','has_copyright_info','has_description',
+                'url_similarity_index','domain_title_match_score','has_https',
+                'has_external_form_submit','has_hidden_field','favicon',
+                'special_char_symbol_ratio_in_url','digit_ratio_in_url',
+                'has_title',
+                'char_continuous_rate','has_robots','no_of_js','no_of_self_ref',
+                'no_of_subdomain']
+    new_names = [
+        'HasSocialNet', 'HasCopyrightInfo', 'HasDescription',
+        'score', 'DomainTitleMatchScore', 'IsHTTPS', 'HasSubmitButton',
+        'HasHiddenFields', 'HasFavicon', 'SpacialCharRatioInURL',
+        'DegitRatioInURL', 'HasTitle', 'CharContinuationRate', 'Robots',
+        'NoOfJS', 'NoOfSelfRef', 'NoOfSubDomain'
+    ]
+    values = {key: float(data[key]) for key in key_list}
+    values_df = pd.DataFrame([values])
+    values_df.rename(columns=dict(zip(key_list, new_names)), inplace=True)
     # data['result'] = model.predict([list(data.values())])
     results = {}
-    for key,value in pca_models.items():
-        scaler = value[2]
-        X_new_scaled = scaler.transform([values])
-        new_pca = (value[0].transform(X_new_scaled))
-        results[key] = (int(value[1].predict(new_pca)[0]))
+    for key,value in models.items():
+        results[key] = int(value.predict(values_df)[0])
     # X_new_scaled = scaler.fit_transform([values])
     # new_pca = (pca_models[0].transform(X_new_scaled))
     # results['pca_n2'] = (int(pca_models[1].predict(new_pca)[0]))
