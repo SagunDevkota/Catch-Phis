@@ -31,46 +31,74 @@ chrome.runtime.onMessage.addListener(async function(message, sender, sendRespons
       // data['empty_external_to_total'] = empty_external_to_total()
       // const onMouseOverValue = await on_mouse_over();
       // data['on_mouse_over'] = onMouseOverValue;
-      let base_url = ""
-      await fetch(chrome.runtime.getURL('file.txt'))
-        .then(response => {
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          return response.text();
-        })
-        .then(data => {
-          // `data` contains the contents of the text file
-          base_url = data
-          console.log(base_url)
-        })
-        .catch(error => {
-          console.error('Error:', error);
+      let p = await fetchData()
+      if(p['svc_pca']===0 || p['xgboost_pca']===0){
+        const card = document.createElement('div');
+        card.style.position = 'fixed';
+        card.style.top = '10px';
+        card.style.right = '10px';
+        card.style.width = '200px';
+        card.style.padding = '20px';
+        card.style.backgroundColor = 'red';
+        card.style.color = 'white';
+        card.style.boxShadow = '0px 0px 10px rgba(0,0,0,0.5)';
+        card.style.zIndex = '1000';
+        card.innerHTML = `
+          <div>
+            <p>This website might be harmful</p>
+            <button id="closeCard" style="position: absolute;right: 6px;top: 1px;">X</button>
+          </div>
+        `;
+
+        document.body.appendChild(card);
+
+        document.getElementById('closeCard').addEventListener('click', () => {
+          card.remove();
         });
-      console.log(base_url)
-      console.log(data)
-      let p = fetch(base_url, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(data) // Add your JSON data here
-            })
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return response.json();
-            })
-            .then(data => {
-                console.log(data);
-            })
-            .catch(error => {
-                console.error('There was a problem with your fetch operation:', error);
-            });
-      console.log(await p)
+      }
   }
 });
+
+async function fetchData() {
+  let base_url = ""
+  await fetch(chrome.runtime.getURL('file.txt'))
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.text();
+    })
+    .then(data => {
+      // `data` contains the contents of the text file
+      base_url = data
+      console.log(base_url)
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+  console.log(base_url)
+  console.log(data)
+  try {
+      const response = await fetch(base_url, {
+          method: "POST",
+          headers: {
+              "Content-Type": "application/json"
+          },
+          body: JSON.stringify(data) // Add your JSON data here
+      });
+
+      if (!response.ok) {
+          throw new Error('Network response was not ok');
+      }
+
+      const responseData = await response.json();
+      console.log(responseData); // Log the data
+      return responseData; // Return the data
+  } catch (error) {
+      console.error('There was a problem with your fetch operation:', error);
+      throw error; // Throw the error so it can be caught by the caller
+  }
+}
 
 function isInternalLink(url) {
   //same domain
@@ -252,7 +280,11 @@ function getFavicon() {
     
     const xhr = new XMLHttpRequest();
     xhr.open('HEAD', defaultFavicon, false); // Synchronous XMLHttpRequest
-    xhr.send();
+    try{
+      xhr.send();
+    }catch{
+      return 0;
+    }
 
     if (xhr.status === 200) {
       return 1;

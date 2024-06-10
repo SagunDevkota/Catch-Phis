@@ -11,8 +11,8 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///test.db'
 
 # Load the model
 pipelines = {}
-pipelines['svc_pca'] = joblib.load('models/exports/full_pipeline_svc_model.joblib')
-pipelines['xgboost_pca'] = joblib.load('models/exports/full_pipeline_xgboost.joblib')
+pipelines['svc_pca'] = joblib.load('test_flask/models/exports/full_pipeline_svc_model.joblib')
+pipelines['xgboost_pca'] = joblib.load('test_flask/models/exports/full_pipeline_xgboost.joblib')
 
 trie = Trie()
 # trie = trie.load_trie("test_flask/models/exports/trie_data.json")
@@ -44,6 +44,21 @@ def report():
             return jsonify(entry.to_dict())
     else:
         return 'Request must contain JSON data', 400
+    
+@app.route("/",methods=['get'])
+def change_label():
+    domain = request.args.get('domain')
+    value = request.args.get('value')
+    if(not domain or not value):
+        return "Insert domain and value"
+    domain = domain.replace("www.","")
+    if("." not in domain):
+        return "Invalid Domain Name"
+    entry = PhishingWebsite.query.filter_by(domain=domain).first()
+    if entry:
+        entry.corrected_output = int(value)
+        return f"Value updated for {domain}"
+    return f"{domain} doesnot exists"
 
 if(__name__ == "__main__"):
     with app.app_context():

@@ -43,6 +43,7 @@ class PhishingWebsite(db.Model):
     # empty_external_to_total = db.Column(db.Float, nullable=False)
     svc_pca = db.Column(db.Integer, nullable=False)
     xgboost_pca = db.Column(db.Integer, nullable=False)
+    corrected_output = db.Column(db.Integer, nullable=True)
 
     def to_dict(self):
         return {column.name: getattr(self, column.name) for column in self.__table__.columns}
