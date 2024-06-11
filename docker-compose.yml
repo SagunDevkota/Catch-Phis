@@ -1,0 +1,57 @@
+version: "3.9"
+
+
+services:
+  app:
+    build:
+      context: .
+      args:
+        - DEV=true
+    ports:
+      - "8000:8000"
+
+    image: catch_phis:v1.0
+
+    volumes:
+     - ./app:/app
+    command: >
+     sh -c "python3 manage.py wait_for_db && 
+            python3 manage.py migrate &&
+            python3 manage.py runserver 0.0.0.0:8000"
+    env_file:
+      - .container.env
+    depends_on:
+      - db
+      - rabbitmq
+  db:
+    image: postgres:13-alpine
+    volumes:
+      - dev-db-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    container_name: "catch_phis"
+    env_file:
+      - .container.env
+  celery:
+    build: .
+    command: celery --app=config.settings worker --loglevel=info --beat
+    volumes:
+      - ./app:/app
+    depends_on:
+      - rabbitmq
+    env_file:
+      - .container.env
+  redis:
+    image: 'redis:alpine'
+  rabbitmq:
+    image: 'rabbitmq'
+    command: rabbitmq-server
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    env_file:
+      - .container.env
+
+
+volumes:
+  dev-db-data:
