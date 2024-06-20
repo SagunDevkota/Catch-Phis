@@ -23,6 +23,8 @@ services:
     depends_on:
       - db
       - rabbitmq
+      - redis
+      - celery
   db:
     image: postgres:13-alpine
     volumes:
