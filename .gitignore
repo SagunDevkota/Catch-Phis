@@ -7,7 +7,8 @@ config.py
 .idea/
 .container.env
 .dockerignore
-migrations/
+*/*/migrations/*.py
+!*/*/migrations/__init__.py
 
 celerybeat-schedule.*
 # C extensions
