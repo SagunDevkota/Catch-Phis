@@ -1,0 +1,111 @@
+/* Ensure the Pricing component takes 70% of the screen height */
+.pricing {
+    text-align: center;
+    padding: 20px;
+    min-height: 70vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background: #f3f4f6;
+    font-family: 'Roboto', sans-serif;
+    color: #333; /* Default text color */
+}
+
+.pricing h2 {
+    margin-bottom: 20px;
+    font-size: 2.5rem;
+    color: #007bff; /* Primary color */
+    font-weight: 700;
+}
+
+.pricing p {
+    margin-bottom: 40px;
+    font-size: 1.2rem;
+    color: #666; /* Secondary text color */
+    font-weight: 400;
+}
+
+.pricing-plans {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.plan {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 20px;
+    width: 300px;
+    text-align: left;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease, background-color 0.3s ease;
+}
+
+.plan:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    background-color: #f1f1f1;
+}
+
+.plan h3 {
+    margin-top: 0;
+    font-size: 1.5rem;
+    color: #007bff; /* Primary color */
+    font-weight: 500;
+}
+
+.plan .price {
+    font-size: 1.8rem;
+    margin: 10px 0;
+    color: #333; /* Default text color */
+    font-weight: 500;
+}
+
+.plan ul {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 20px;
+}
+
+.plan ul li {
+    margin: 10px 0;
+    color: #555; /* Secondary text color */
+    font-weight: 400;
+    position: relative;
+    padding-left: 20px;
+}
+
+.plan ul li::before {
+    content: '✔'; /* Check mark before each feature */
+    color: #007bff;
+    position: absolute;
+    left: 0;
+    top: 0;
+    font-size: 1rem;
+}
+
+.plan button {
+    background: #007bff; /* Primary color */
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 20px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: background-color 0.3s ease;
+}
+
+.plan button:hover {
+    background: #0056b3; /* Darker primary color for hover */
+}
+
+@media (max-width: 768px) {
+    .plan {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+}
