@@ -1,0 +1,38 @@
+/* src/components/NavBar.css */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #34579b;
+    padding: 1rem;
+    color: white;
+}
+
+.nav-links {
+    list-style-type: none;
+    display: flex;
+}
+
+.nav-links li {
+    margin: 0 1rem;
+}
+
+.nav-links a {
+    color: white;
+    text-decoration: none;
+}
+
+.nav-links a:hover {
+    text-decoration: underline;
+}
+
+/* NavBar.css */
+
+.navbar-title {
+    text-decoration: none; /* Prevents underline on the link */
+    color: inherit; /* Ensures the link takes on the color of the surrounding text */
+}
+
+.navbar h1 {
+    margin: 0; /* Ensures no margin issues with the h1 inside the link */
+}
