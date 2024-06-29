@@ -40,7 +40,9 @@ INSTALLED_APPS = [
     'drf_spectacular',
     'config',
     'user',
-    'corsheaders'
+    'corsheaders',
+    'payment',
+    'corporate'
 ]
 
 MIDDLEWARE = [
