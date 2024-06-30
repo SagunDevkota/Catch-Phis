@@ -239,3 +239,33 @@ class PrivateTestAPI(TestCase):
         res = self.client.get(CORPORATE_CREATE_URL)
         self.assertEqual(res.status_code,status.HTTP_403_FORBIDDEN)
         self.assertDictEqual(res.json(),{'detail': 'You do not have permission to perform this action.'})
+
+    def test_create_multiple_corporate_fail(self):
+        """Returns error if single user tries to create multiple corporate."""
+        user = self.authenticate_user('corporate')
+        params = {
+            "company_name":"xyz",
+            "contact_email":"abc@example.com",
+            "contact_phone":"1226543"
+        }
+        create_corporate(user=user,**params)
+        params = {
+            "first_name": "string",
+            "last_name": "string",
+            "phone": "string",
+            "email": "user_emp@example.com",
+            "password": "string",
+            "role": "employee"
+            }
+        res = self.client.post(CREATE_CORPORATE_USER_URL,data=params)
+        params = {
+            "first_name": "string",
+            "last_name": "string",
+            "phone": "string",
+            "email": "user_emp@example.com",
+            "password": "string",
+            "role": "employee"
+            }
+        res = self.client.post(CREATE_CORPORATE_USER_URL,data=params)
+        self.assertEqual(res.status_code,status.HTTP_400_BAD_REQUEST)
+        self.assertDictEqual(res.json(),{'error': 'Key (email)=(user_emp@example.com) already exists.'})
