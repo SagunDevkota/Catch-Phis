@@ -41,8 +41,8 @@ INSTALLED_APPS = [
     'config',
     'user',
     'corsheaders',
+    'corporate',
     'payment',
-    'corporate'
 ]
 
 MIDDLEWARE = [
