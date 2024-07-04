@@ -24,6 +24,7 @@ CACHES = {
 
 CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:5500",
+    "https://asp-adequate-tortoise.ngrok-free.app"
 ]
 
 CELERY_BROKER_URL = env("CELERY_BROKER", default="amqp://devuser:changeme@rabbitmq:5672/")
