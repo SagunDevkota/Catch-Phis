@@ -1,3 +1,5 @@
 Add a login and register page where there will be two types of users . corporate and single users 
 
 Single user will only be able to see their analytics of phising data where as corporate user will be able to see all the users and their data and also be able to add their new users much like amazon aws cloud system
+
+The data will be stored in a database and the data will be shown in the frontend in form of different tables and pie chart and graphs
