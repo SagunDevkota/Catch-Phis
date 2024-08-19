@@ -10,7 +10,7 @@ import random
 class CorporateDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = CorporateDetail
-        fields = ['company_name','contact_email','contact_phone','created_at','activated']
+        fields = ['company_name','contact_email','contact_phone','created_at','activated','subscribed','subscription_expires_at']
         read_only_fields = ['created_at','activated']
 
     def to_internal_value(self, data):
