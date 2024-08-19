@@ -5,7 +5,7 @@ from rest_framework.pagination import CursorPagination
 from rest_framework.response import Response
 from rest_framework import status,exceptions
 from drf_spectacular.utils import extend_schema,OpenApiParameter
-from ..serializers import WebsiteLogSerializer
+from ..serializers.serializers_websitelog import WebsiteLogSerializer
 from ..models import PredictionLog, UserWebsiteInteraction
 from ..utils.analyze import Analyze
 from ..authentication import CustomUserAuthentication

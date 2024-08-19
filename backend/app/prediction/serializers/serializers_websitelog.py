@@ -1,5 +1,5 @@
 from rest_framework.serializers import ModelSerializer
-from .models import PredictionLog
+from ..models import PredictionLog
 
 class WebsiteLogSerializer(ModelSerializer):
     class Meta:
