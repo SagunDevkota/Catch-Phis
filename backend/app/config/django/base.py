@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from config.env import BASE_DIR, env
 import os
 from datetime import timedelta
+import joblib
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/ 
@@ -43,6 +44,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'corporate',
     'payment',
+    'prediction'
 ]
 
 MIDDLEWARE = [
@@ -147,3 +149,6 @@ SPECTACULAR_SETTINGS = {
         "persistAuthorization": True,
     },
 }
+
+MODELS = {"svc_pca":joblib.load(os.path.join(BASE_DIR,'models','full_pipeline_svc_model.joblib')),
+          "xgboost_pca":joblib.load(os.path.join(BASE_DIR,'models','full_pipeline_xgboost.joblib'))}
