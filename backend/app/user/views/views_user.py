@@ -17,7 +17,7 @@ from user.serializers.serializers_user import (
 )
 
 class CreateUserView(generics.CreateAPIView):
-    """Create a new user in the system"""
+    """Create a new user in the system account_type : personal/corporate"""
     serializer_class = UserSerializer
 
 
