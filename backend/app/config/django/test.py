@@ -1,5 +1,9 @@
 from .base import *
 
+INSTALLED_APPS.append('silk')
+
+MIDDLEWARE.append('silk.middleware.SilkyMiddleware')
+
 DATABASES = {
     'default': {
         'ENGINE' : "django.db.backends.postgresql",

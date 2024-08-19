@@ -18,6 +18,7 @@ from drf_spectacular.views import (
     SpectacularAPIView,
     SpectacularSwaggerView,
 )
+from django.conf import settings
 from django.contrib import admin
 from django.urls import path,include
 
@@ -30,3 +31,6 @@ urlpatterns = [
     path('api/payment/',include('payment.urls')),
     path('api/predict/',include('prediction.urls'))
 ]
+
+if settings.DEBUG:
+    urlpatterns += [path('silk/', include('silk.urls', namespace='silk'))]
