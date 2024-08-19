@@ -1,3 +1,4 @@
+from django.db import transaction
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.mixins import CreateModelMixin
 from rest_framework.permissions import AllowAny
@@ -26,8 +27,9 @@ class PredictionViewSet(GenericViewSet,CreateModelMixin):
             data = analyze.result()
         except Exception as e:
             raise exceptions.ValidationError({"error":e})
-        saved = serializer.save(**data)
-        UserWebsiteInteraction.objects.create(user=self.request.user,website_log=saved)
+        with transaction.atomic():
+            saved = serializer.save(**data)
+            UserWebsiteInteraction.objects.create(user=self.request.user,website_log=saved)
         return {"svc_pca":data['svc_pca'],"xgboost_pca":data['xgboost_pca']}
 
     @extend_schema( 
