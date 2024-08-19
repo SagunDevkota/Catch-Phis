@@ -127,7 +127,7 @@ class CorporateDetailViewSet(
     create=extend_schema(
         description=generate_doc(
             method='POST',
-            description='Register a user for corporate.',
+            description='Register a user for corporate. Role: admin/employee',
             preconditions=['User must be authenticated as account_type=`corporate` and role `admin`.'],
             postconditions=['Creates corporate user assigned to the company.',
                             'Account is automatically activated.'])
