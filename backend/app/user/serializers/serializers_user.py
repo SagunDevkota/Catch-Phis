@@ -79,6 +79,12 @@ class UserSerializer(serializers.ModelSerializer):
 
         return user
     
+class UserSlimSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = get_user_model()
+        fields = ['first_name','last_name','email']
+        read_only_fields = fields
+    
 class UserDetailsSerializer(serializers.ModelSerializer):
     """Serializer with all user details"""
     class Meta:
