@@ -3,6 +3,7 @@ from rest_framework.viewsets import GenericViewSet
 from rest_framework.mixins import ListModelMixin
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.pagination import PageNumberPagination
 from drf_spectacular.openapi import OpenApiParameter 
 from drf_spectacular.utils import extend_schema
 from corporate.models import CorporateUser
@@ -15,6 +16,7 @@ class StatsViewSet(GenericViewSet,ListModelMixin):
     serializer_class = StatsSerializer
     authentication_classes = [JWTAuthentication]
     permission_classes = [IsAuthenticated]
+    pagination_class = PageNumberPagination
     queryset = UserWebsiteInteraction.objects.prefetch_related('website_log','user').annotate(
             is_legit=Case(
                 When(website_log__svc_pca=1, then=Value(1)),
@@ -22,7 +24,7 @@ class StatsViewSet(GenericViewSet,ListModelMixin):
                 default=Value(0),
                 output_field=IntegerField()
             )
-        )
+        ).order_by('-interaction_datetime')
     
     def get_permissions(self):
         self.admin = True if self.request.query_params.get('admin') == 'true' else False
@@ -57,11 +59,4 @@ class StatsViewSet(GenericViewSet,ListModelMixin):
         OpenApiParameter(name='admin',type=bool,description="Is corporate admin trying to view stats of organization?")
         ])
     def list(self, request, *args, **kwargs):
-        queryset = self.filter_queryset(self.get_queryset())
-        print(vars(queryset[0]))
-        page = self.paginate_queryset(queryset)
-        if page is not None:
-            serializer = self.get_serializer(page, many=True)
-            return self.get_paginated_response(serializer.data)
-        serializer = self.get_serializer(queryset, many=True)
         return super().list(request, *args, **kwargs)
