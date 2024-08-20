@@ -52,7 +52,6 @@ class PrivatePredictionLogTests(TestCase):
         }
 
         res = self.client.post(CREATE_PREDICTION,data=data)
-        
         self.assertEqual(res.status_code,status.HTTP_201_CREATED)
         self.assertDictEqual(res.json(),{"svc_pca":1,"xgboost_pca":0})
 
