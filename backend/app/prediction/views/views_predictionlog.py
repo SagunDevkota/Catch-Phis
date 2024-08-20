@@ -2,7 +2,6 @@ from django.db import transaction
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.mixins import CreateModelMixin
 from rest_framework.permissions import AllowAny
-from rest_framework.pagination import CursorPagination
 from rest_framework.response import Response
 from rest_framework import status,exceptions
 from drf_spectacular.utils import extend_schema,OpenApiParameter
@@ -15,7 +14,6 @@ class PredictionViewSet(GenericViewSet,CreateModelMixin):
     serializer_class = WebsiteLogSerializer
     authentication_classes = [CustomUserAuthentication]
     permission_classes = [AllowAny]
-    pagination_class = CursorPagination
     queryset = PredictionLog.objects.all()
 
     def perform_create(self, serializer):
