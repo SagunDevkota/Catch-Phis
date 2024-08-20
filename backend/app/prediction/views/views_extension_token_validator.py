@@ -42,9 +42,9 @@ class ValidateExtensionTokenApiView(APIView):
             try:
                 user = get_object_or_404(get_user_model(),extension_token=token)
             except ValidationError:
-                return Response({"error":"Invalid token"},status=status.HTTP_200_OK)
+                return Response({"error":"Invalid token"},status=status.HTTP_400_BAD_REQUEST)
             validator = ''.join(random.choices(string.ascii_letters, k=10))
             user.extension_validator = validator
             user.save()
             return Response({"validator":validator},status=status.HTTP_200_OK)
-        return Response({"error":"No Token Found"},status=status.HTTP_200_OK)
+        return Response({"error":"No Token Found"},status=status.HTTP_400_BAD_REQUEST)
