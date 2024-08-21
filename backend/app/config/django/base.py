@@ -44,7 +44,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'corporate',
     'payment',
-    'prediction'
+    'prediction',
+    'access_control_list'
 ]
 
 MIDDLEWARE = [

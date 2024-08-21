@@ -9,6 +9,7 @@ from ..serializers.serializers_websitelog import WebsiteLogSerializer
 from ..models import PredictionLog, UserWebsiteInteraction, LegitDomain
 from ..utils.analyze import Analyze
 from ..authentication import CustomUserAuthentication
+from access_control_list.models import AccessControl
 
 class PredictionViewSet(GenericViewSet,CreateModelMixin):
     serializer_class = WebsiteLogSerializer
@@ -18,6 +19,12 @@ class PredictionViewSet(GenericViewSet,CreateModelMixin):
 
     def perform_create(self, serializer):
         analyze = Analyze(serializer.validated_data)
+        acl = AccessControl.objects.filter(domain=analyze.get_domain()).first()
+        if(acl):
+            if(acl.domain_type=='whitelist'):
+                return {"svc_pca":1,"xgboost_pca":1}
+            else:
+                return {"svc_pca":0,"xgboost_pca":0}
         log = self.get_queryset().filter(domain=analyze.get_domain()).first()
         if(log):
             return {"svc_pca":log.svc_pca,"xgboost_pca":log.xgboost_pca}
