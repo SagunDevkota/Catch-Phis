@@ -31,9 +31,6 @@ CORS_ALLOWED_ORIGINS = [
     "https://asp-adequate-tortoise.ngrok-free.app"
 ]
 
-CELERY_BROKER_URL = env("CELERY_BROKER", default="amqp://devuser:changeme@rabbitmq:5672/")
-CELERY_RESULT_BACKEND = env("CELERY_BACKEND", default="rpc://")
-
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = env("host",default="")
 EMAIL_PORT = 587
