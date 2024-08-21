@@ -10,6 +10,7 @@ import Chat from './components/Chat';
 import Cancel from './components/Cancel';
 import Activate from './components/Activate';
 import Profile from './components/Profile';
+import Corporate from './components/Corporate';
 import { AuthProvider } from './components/AuthContext';
 import './App.css';
 
@@ -28,6 +29,7 @@ function App() {
                     <Route path="/activate" element={<Activate />} />
                     <Route path="/profile" element={<Profile />} />
                     <Route path="/cancel" element={<Cancel />} />
+                    <Route path="/corporate" element={<Corporate />} />
                 </Routes>
             </Router>
         </AuthProvider>
