@@ -1,43 +1,36 @@
 body {
-    margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-      sans-serif;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
-  
-  code {
-    font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-      monospace;
-  }
-  
-
-.link {
-    color: #fff;
-    text-decoration: none;
+  background-color: #e7e3e0 !important;
 }
 
-.link:hover {
-    color: rgb(17, 113, 151);
+.wrapper {
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
 }
 
-.login-link, .reg-link {
-    text-decoration: none;
+.landing {
+  height: 100vh;
+  color: lightgray;
+  background: white url("assets/phishing-landing.jpg");
+  background-size: cover;
+  font-size: 100px;
 }
 
-.product-link {
-    text-decoration: none;
-    color: black;
+.spinner {
+  position: fixed;
+  z-index: 9999;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
 }
 
-
-.card-style {
-  width: 100%;
-  height: 15vw;
-  object-fit: cover;
+/* .custom-btn{
+  padding: 1rem 2rem;
+  font-size: 10rem;
+  height: 80px;
+  width: 80px;
 }
 
-/* .product-style{
-  height: 20vw;
+.custom-i{
+  height: 60px;
+  width: 60px;
 } */

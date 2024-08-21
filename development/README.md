@@ -1,3 +1,11 @@
-# up and running on:
+# .env configuration:
 
-https://64b14420f4a6c614bd258f75--cerulean-chebakia-f9abc12.netlify.app/
+```bash
+REACT_APP_CATCHPHIS_SERVER_URL=http://127.0.0.1:8000
+```
+
+# How to run?
+
+```bash
+npm i && npm start
+```
