@@ -15,7 +15,7 @@ class LegitDomain(models.Model):
             Returns objects where the trigram similarity score meets or exceeds the specified threshold,
             ordered by descending similarity score and then by domain name alphabetically.
     """
-    domain = models.CharField(max_length=255,default=None,null=True)
+    domain = models.CharField(max_length=255,default=None,null=True,unique=True)
 
     @classmethod
     def search_similar(cls, query: str, similarity_threshold=0.3):

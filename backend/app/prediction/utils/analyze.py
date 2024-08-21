@@ -119,7 +119,7 @@ class Analyze:
         
         return (len(longest_alpha)+len(longest_digit)+len(longest_special))/len(text)
 
-    def result(self):
+    def result(self,predictions=False):
         similar = LegitDomain.search_similar(self.domain).first()
         self.data['url_length'] = self.__url_length()
         self.data['domain_length'] = self.__domain_length()
@@ -140,5 +140,6 @@ class Analyze:
         self.data['url_similarity_index'] = similar.similarity if similar else 0
         self.data["char_continuous_rate"] = self.__char_continuous_rate()
         self.data["domain"] = self.domain
-        self.data.update(get_predictions(self.data))
+        if(get_predictions):
+            self.data.update(get_predictions(self.data))
         return self.data

@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework import status,exceptions
 from drf_spectacular.utils import extend_schema,OpenApiParameter
 from ..serializers.serializers_websitelog import WebsiteLogSerializer
-from ..models import PredictionLog, UserWebsiteInteraction
+from ..models import PredictionLog, UserWebsiteInteraction, LegitDomain
 from ..utils.analyze import Analyze
 from ..authentication import CustomUserAuthentication
 
@@ -22,7 +22,13 @@ class PredictionViewSet(GenericViewSet,CreateModelMixin):
         if(log):
             return {"svc_pca":log.svc_pca,"xgboost_pca":log.xgboost_pca}
         try:
-            data = analyze.result()
+            legit_domain = LegitDomain.objects.filter(domain=analyze.get_domain()).first()
+            if(legit_domain):
+                data = analyze.result(predictions=False)
+                data["svc_pca"]=1
+                data["xgboost_pca"]=1
+            else:
+                data = analyze.result(predictions=True)
         except Exception as e:
             raise exceptions.ValidationError({"error":e})
         with transaction.atomic():
