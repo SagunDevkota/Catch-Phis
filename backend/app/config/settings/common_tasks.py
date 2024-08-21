@@ -32,7 +32,7 @@ def update_domain():
             
             # Print the first few rows
             for i, row in enumerate(csv_reader):
-                domains.append(row[1])
+                domains.append(row[1].replace("www.",""))
                 if(i==1000000):
                     break
     domains = domains[1:]
