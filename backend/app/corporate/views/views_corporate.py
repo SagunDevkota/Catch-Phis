@@ -88,7 +88,7 @@ class CorporateDetailViewSet(
         return CorporateDetail.objects.prefetch_related('corporate_user_detail').filter(corporate_user_detail__user=self.request.user)
 
     def get_permissions(self):
-        if(self.action == 'create'):
+        if(self.action in ['create','activate']):
             return [permissions_corporate.CorporateDetailPermission()]
         return super().get_permissions()
     
