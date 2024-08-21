@@ -4,3 +4,5 @@ Single user will only be able to see their analytics of phising data where as co
 
 The data will be stored in a database and the data will be shown in the frontend in form of different tables and pie chart and graphs
 some  change
+
+eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzI0MjIzNzg4LCJpYXQiOjE3MjQyMjE2ODgsImp0aSI6IjlkOWI4OWEwZWI3NjQ5YzViMDk1YWI2ZDI4YzZkOTY5IiwidXNlcl9pZCI6M30.fghFN_deTwZYP_ML7eeyWmxNseuaMndKKCSqTbgcATo
