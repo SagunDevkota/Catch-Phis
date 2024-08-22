@@ -1,4 +1,5 @@
-from django.db.models import Case,When,Value,Count,IntegerField,Subquery
+from django.db.models import Case,When,Value,Count,IntegerField,Subquery,Sum
+from django.contrib.auth import get_user_model
 from rest_framework.viewsets import GenericViewSet
 from rest_framework.mixins import ListModelMixin
 from rest_framework.permissions import IsAuthenticated
@@ -19,9 +20,9 @@ class StatsViewSet(GenericViewSet,ListModelMixin):
     pagination_class = PageNumberPagination
     queryset = UserWebsiteInteraction.objects.prefetch_related('website_log','user').annotate(
             is_legit=Case(
-                When(website_log__svc_pca=1, then=Value(1)),
-                When(website_log__xgboost_pca=1, then=Value(1)),
-                default=Value(0),
+                When(website_log__svc_pca=0, then=Value(0)),
+                When(website_log__xgboost_pca=0, then=Value(0)),
+                default=Value(1),
                 output_field=IntegerField()
             )
         ).order_by('-interaction_datetime')
@@ -43,15 +44,28 @@ class StatsViewSet(GenericViewSet,ListModelMixin):
         to_date = datetime.strptime(self.request.query_params.get("to",str(today)),"%Y-%m-%d").date()
         if(self.admin):
             corporate_details_subquery = CorporateUser.objects.filter(
-                    user=self.request.user
-                ).values('corporate_details')
+                user=self.request.user
+            ).values('corporate_details')
             corporate_users_with_same_details = CorporateUser.objects.filter(
-                    corporate_details=Subquery(corporate_details_subquery)
-                ).values_list('user_id',flat=True)
+                corporate_details=Subquery(corporate_details_subquery)
+            ).values_list('user_id', flat=True)
             queryset = super().get_queryset().filter(user__in=corporate_users_with_same_details)
         else:
             queryset = super().get_queryset().filter(user=self.request.user)
-        return queryset.filter(interaction_datetime__date__gte=from_date,interaction_datetime__date__lte=to_date).annotate(total=Count('is_legit'))
+
+        queryset = queryset.filter(
+            interaction_datetime__date__gte=from_date,
+            interaction_datetime__date__lte=to_date
+        )
+        queryset = queryset.values('user').annotate(
+            total=Count('id'),
+            legit=Sum('is_legit')
+        ).order_by('user')
+
+        for entry in queryset:
+            entry['user'] = get_user_model().objects.get(id=entry['user'])
+
+        return queryset
     
     @extend_schema(parameters=[
         OpenApiParameter(name='from',type=date,description="Start date for stats.yyyy-mm-dd defaults to 30 days before"),
@@ -59,4 +73,5 @@ class StatsViewSet(GenericViewSet,ListModelMixin):
         OpenApiParameter(name='admin',type=bool,description="Is corporate admin trying to view stats of organization?")
         ])
     def list(self, request, *args, **kwargs):
+        print(self.get_queryset())
         return super().list(request, *args, **kwargs)
