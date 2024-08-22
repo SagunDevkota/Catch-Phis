@@ -11,7 +11,7 @@ class CorporateDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = CorporateDetail
         fields = ['id','company_name','contact_email','contact_phone','created_at','activated','subscribed','subscription_expires_at']
-        read_only_fields = ['created_at','activated']
+        read_only_fields = ['created_at','activated','subscribed','subscription_expires_at']
 
     def to_internal_value(self, data):
         if isinstance(data, QueryDict):
