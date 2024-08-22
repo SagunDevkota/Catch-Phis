@@ -133,12 +133,27 @@ class PrivateTestAPI(TestCase):
         self.assertDictEqual(res.json(),{'contact_phone': ['corporate detail with this contact phone already exists.']})
         self.assertEqual(res.status_code,status.HTTP_400_BAD_REQUEST)
 
+    def test_get_corporate_details_with_corporate_account_not_activated(self):
+        """Return 400 with the detail of corporate user is associated with."""
+        params = {
+            "company_name":"xyz",
+            "contact_email":"abc@example.com",
+            "contact_phone":"1226543",
+            "activated":False
+        }
+        user = self.authenticate_user('corporate')
+        create_corporate(user,**params)
+        res = self.client.get(CORPORATE_LIST_URL)
+        self.assertEqual(res.status_code,status.HTTP_403_FORBIDDEN)
+        self.assertEqual(res.json(),{'detail': 'Corporate Not activated or user is not admin.'})
+
     def test_get_corporate_details_with_corporate_account(self):
         """Return 200 with the detail of corporate user is associated with."""
         params = {
             "company_name":"xyz",
             "contact_email":"abc@example.com",
-            "contact_phone":"1226543"
+            "contact_phone":"1226543",
+            "activated":True
         }
         user = self.authenticate_user('corporate')
         create_corporate(user,**params)
@@ -151,15 +166,14 @@ class PrivateTestAPI(TestCase):
         params = {
             "company_name":"xyz",
             "contact_email":"abc@example.com",
-            "contact_phone":"1226543"
+            "contact_phone":"1226543",
+            "activated":True
         }
         user = self.authenticate_user('personal')
         create_corporate(user,**params)
         res = self.client.get(CORPORATE_LIST_URL)
         self.assertEqual(res.status_code,status.HTTP_403_FORBIDDEN)
-        self.assertEqual(res.json(),{
-            "detail": "You do not have permission to perform this action."
-            })
+        self.assertEqual(res.json(),{'detail': 'User is not corporate type'})
     
     def test_activate_corporate_details_with_corporate_account(self):
         """Return 200 with corporate activated message."""
@@ -182,7 +196,8 @@ class PrivateTestAPI(TestCase):
         params = {
             "company_name":"xyz",
             "contact_email":"abc@example.com",
-            "contact_phone":"1226543"
+            "contact_phone":"1226543",
+            "activated":True
         }
         create_corporate(user=user,**params)
         params = {
@@ -210,19 +225,21 @@ class PrivateTestAPI(TestCase):
         params = {
             "company_name":"xyz",
             "contact_email":"abc@example.com",
-            "contact_phone":"1226543"
+            "contact_phone":"1226543",
+            "activated":True
         }
         create_corporate(user=user,**params)
         res = self.client.get(CREATE_CORPORATE_USER_URL)
         self.assertEqual(res.status_code,status.HTTP_200_OK)
 
     def test_list_corporate_user_employee(self):
-        """Returns 403 with insufficient permission error."""
+        """Returns error if employee tries to create new user. 403 with insufficient permission error."""
         user = self.authenticate_user('corporate')
         params = {
             "company_name":"xyz",
             "contact_email":"abc@example.com",
-            "contact_phone":"1226543"
+            "contact_phone":"1226543",
+            "activated":True
         }
         create_corporate(user=user,**params)
         params = {
@@ -233,20 +250,21 @@ class PrivateTestAPI(TestCase):
             "password": "string",
             "role": "employee"
             }
-        self.client.post(CREATE_CORPORATE_USER_URL,data=params)
+        res = self.client.post(CREATE_CORPORATE_USER_URL,data=params)
         user = get_user_model().objects.get(email='user_emp@example.com')
         self.client.force_authenticate(user=user)
         res = self.client.get(CORPORATE_CREATE_URL)
         self.assertEqual(res.status_code,status.HTTP_403_FORBIDDEN)
-        self.assertDictEqual(res.json(),{'detail': 'You do not have permission to perform this action.'})
+        self.assertDictEqual(res.json(),{'detail': 'Corporate Not activated or user is not admin.'})
 
     def test_create_multiple_corporate_fail(self):
-        """Returns error if single user tries to create multiple corporate."""
+        """Returns error if user tries to create multiple corporate user with same email."""
         user = self.authenticate_user('corporate')
         params = {
             "company_name":"xyz",
             "contact_email":"abc@example.com",
-            "contact_phone":"1226543"
+            "contact_phone":"1226543",
+            "activated":True
         }
         create_corporate(user=user,**params)
         params = {

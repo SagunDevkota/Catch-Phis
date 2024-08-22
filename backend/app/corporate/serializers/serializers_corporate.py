@@ -10,7 +10,7 @@ import random
 class CorporateDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = CorporateDetail
-        fields = ['company_name','contact_email','contact_phone','created_at','activated']
+        fields = ['id','company_name','contact_email','contact_phone','created_at','activated','subscribed','subscription_expires_at']
         read_only_fields = ['created_at','activated']
 
     def to_internal_value(self, data):
@@ -31,8 +31,7 @@ class CorporateDetailSerializer(serializers.ModelSerializer):
                             message=f"The activation key for {validated_data['contact_email']} is {token} and will expire in 180 seconds.",to_list=[validated_data['contact_email']])
                 return corporate_detail
         except IntegrityError as e:
-            print(e)
-            raise serializers.ValidationError("An error occurred while creating the corporate user.")
+            raise serializers.ValidationError("An error occurred while creating the corporate.")
 
 class CorporateUserSerializer(serializers.ModelSerializer):
     user = UserDetailsSerializer(read_only=True)

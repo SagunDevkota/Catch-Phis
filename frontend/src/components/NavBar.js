@@ -15,7 +15,9 @@ const NavBar = () => {
                 <li><Link to="/">Home</Link></li>
                 <li><Link to="/about">About</Link></li>
                 <li><Link to="/pricing">Pricing</Link></li>
-                <li><Link to="/chat">Chat</Link></li>
+                {/* <li><Link to="/chat">Chat</Link></li> */}
+                <li><Link to="/corporate">Corporate Profile</Link></li>
+
                 {isLoggedIn ? (
                     <>
                         <li><Link to="/profile">Profile</Link></li>

@@ -1,11 +1,12 @@
 import os
 
 from celery import Celery
+from celery.schedules import crontab
 from django.conf import settings
 from config.env import env
 
 # Set the default Django settings module for the 'celery' program.
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'app.config.test')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'config.django.base')
 
 app = Celery('app', broker=env("CELERY_BROKER", default="amqp://devuser:changeme@rabbitmq:5672/"), backend=env("CELERY_BROKER", default="rpc://"))
 app.conf.broker_connection_retry_on_startup = True
@@ -19,6 +20,10 @@ app.config_from_object(settings, namespace='CELERY')
 app.autodiscover_tasks()
 
 app.conf.beat_schedule = {
+    'run-task-every-month': {
+        'task': 'config.settings.common_tasks.update_domain',  # Replace with the actual path to your task function
+        'schedule': crontab(day_of_month=1, hour=0, minute=0),
+    },
 }
 
 # if 'runserver' in sys.argv:

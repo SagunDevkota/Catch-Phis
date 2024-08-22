@@ -6,7 +6,8 @@ from rest_framework.viewsets import GenericViewSet
 from rest_framework.mixins import (CreateModelMixin,
                                    DestroyModelMixin,
                                    UpdateModelMixin,
-                                   ListModelMixin)
+                                   ListModelMixin,
+                                   RetrieveModelMixin)
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
@@ -88,7 +89,7 @@ class CorporateDetailViewSet(
         return CorporateDetail.objects.prefetch_related('corporate_user_detail').filter(corporate_user_detail__user=self.request.user)
 
     def get_permissions(self):
-        if(self.action == 'create'):
+        if(self.action in ['create','activate']):
             return [permissions_corporate.CorporateDetailPermission()]
         return super().get_permissions()
     
@@ -127,7 +128,7 @@ class CorporateDetailViewSet(
     create=extend_schema(
         description=generate_doc(
             method='POST',
-            description='Register a user for corporate.',
+            description='Register a user for corporate. Role: admin/employee',
             preconditions=['User must be authenticated as account_type=`corporate` and role `admin`.'],
             postconditions=['Creates corporate user assigned to the company.',
                             'Account is automatically activated.'])
@@ -159,7 +160,8 @@ class CorporateUserViewSet(
     CreateModelMixin,
     DestroyModelMixin,
     UpdateModelMixin,
-    ListModelMixin
+    ListModelMixin,
+    RetrieveModelMixin
     ):
     serializer_class = CorporateUserSerializer
     permission_classes = [permissions_corporate.CorporateUserPermission]

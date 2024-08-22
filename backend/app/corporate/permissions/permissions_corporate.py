@@ -1,5 +1,5 @@
 from rest_framework.permissions import BasePermission
-from rest_framework.exceptions import NotAuthenticated
+from rest_framework.exceptions import NotAuthenticated,PermissionDenied
 
 from corporate.models import CorporateUser
 
@@ -20,9 +20,9 @@ class CorporateUserPermission(BasePermission):
         try:
             user = request.user
             if(user and user.account_type=='corporate' and user.is_authenticated):
-                if(CorporateUser.objects.filter(user=user,role='admin').count()>=1):
+                if(CorporateUser.objects.select_related('corporate_details').filter(user=user,role='admin',corporate_details__activated=True).count()>=1):
                     return True
-                return False
-            return False
+                raise PermissionDenied({"detail":"Corporate Not activated or user is not admin."})
+            raise PermissionDenied({"detail":"User is not corporate type"})
         except AttributeError:
             raise NotAuthenticated()

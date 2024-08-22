@@ -27,8 +27,11 @@ services:
       - celery
   db:
     image: postgres:13-alpine
+    command: postgres -c max_connections=500
+    shm_size: 1g
     volumes:
       - dev-db-data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
     ports:
       - "5432:5432"
     container_name: "catch_phis"
@@ -53,6 +56,15 @@ services:
       - "15672:15672"
     env_file:
       - .container.env
+  nginx:
+    image: nginx:stable-alpine3.20-perl
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./app/staticfiles:/app/staticfiles
+    ports:
+      - "80:80"
+    depends_on:
+      - app
 
 
 volumes:

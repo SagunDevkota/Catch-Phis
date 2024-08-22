@@ -47,14 +47,14 @@ class PrivatePaymentApiTest(TestCase):
         self.get_authenticated_user(account_type='personal',email="user@email.com")
         res = self.client.post(CREATE_CHECKOUT_SESSION)
         self.assertEqual(res.status_code,status.HTTP_403_FORBIDDEN)
-        self.assertDictEqual(res.json(),{'detail': 'You do not have permission to perform this action.'})
+        self.assertDictEqual(res.json(),{'detail': 'User is not corporate type'})
 
     def test_create_checkout_session_without_admin_role(self):
         """Return 403 if user doesnot have admin role."""
-        self.get_authenticated_user(account_type='corporate',email="user@email.com")
+        user = self.get_authenticated_user(account_type='corporate',email="user@email.com")
         res = self.client.post(CREATE_CHECKOUT_SESSION)
         self.assertEqual(res.status_code,status.HTTP_403_FORBIDDEN)
-        self.assertDictEqual(res.json(),{'detail': 'You do not have permission to perform this action.'})
+        self.assertDictEqual(res.json(),{'detail': 'Corporate Not activated or user is not admin.'})
 
     @mock.patch('stripe.checkout.Session.create')
     def test_create_checkout_session_with_admin_role(self,create):
@@ -63,7 +63,8 @@ class PrivatePaymentApiTest(TestCase):
         params = {
             "company_name":"xyz",
             "contact_email":"abc@example.com",
-            "contact_phone":"1226543"
+            "contact_phone":"1226543",
+            "activated":True
         }
         user = self.get_authenticated_user(account_type='corporate',email="user@email.com")
         create_corporate(user,**params)
@@ -77,7 +78,8 @@ class PrivatePaymentApiTest(TestCase):
             "company_name":"xyz",
             "contact_email":"abc@example.com",
             "contact_phone":"1226543",
-            "subscribed":True
+            "subscribed":True,
+            "activated":True
         }
         user = self.get_authenticated_user(account_type='corporate',email="user@email.com")
         create_corporate(user,**params)
@@ -93,7 +95,8 @@ class PrivatePaymentApiTest(TestCase):
         params = {
             "company_name":"xyz",
             "contact_email":"abc@example.com",
-            "contact_phone":"1226543"
+            "contact_phone":"1226543",
+            "activated":True
         }
         user = self.get_authenticated_user(account_type='corporate',email="user@email.com")
         create_corporate(user,**params)

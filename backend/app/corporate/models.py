@@ -18,7 +18,7 @@ class CorporateUser(models.Model):
         ('admin',"Admin"),
         ("employee","Employee")
     )
-    user = models.ForeignKey(get_user_model(),on_delete=models.CASCADE)
+    user = models.OneToOneField(get_user_model(),on_delete=models.CASCADE)
     role = models.CharField(max_length=9,choices=ROLE_CHOICES)
     corporate_details = models.ForeignKey(CorporateDetail,on_delete=models.CASCADE,related_name='corporate_user_detail')
 

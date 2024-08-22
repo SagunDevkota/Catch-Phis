@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 from config.env import BASE_DIR, env
 import os
 from datetime import timedelta
+import joblib
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.0/howto/deployment/checklist/ 
@@ -23,8 +24,6 @@ SECRET_KEY = env('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool('DJANGO_DEBUG',default=True)
-
-ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -43,6 +42,8 @@ INSTALLED_APPS = [
     'corsheaders',
     'corporate',
     'payment',
+    'prediction',
+    'access_control_list'
 ]
 
 MIDDLEWARE = [
@@ -114,6 +115,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
 STATIC_URL = 'static/'
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -128,6 +133,7 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
+    'PAGE_SIZE': 10
 }
 
 # JWT Token Config
@@ -147,3 +153,9 @@ SPECTACULAR_SETTINGS = {
         "persistAuthorization": True,
     },
 }
+
+MODELS = {"svc_pca":joblib.load(os.path.join(BASE_DIR,'models','full_pipeline_svc_model.joblib')),
+          "xgboost_pca":joblib.load(os.path.join(BASE_DIR,'models','full_pipeline_xgboost.joblib'))}
+
+CELERY_BROKER_URL = env("CELERY_BROKER", default="amqp://devuser:changeme@rabbitmq:5672/")
+CELERY_RESULT_BACKEND = env("CELERY_BACKEND", default="rpc://")

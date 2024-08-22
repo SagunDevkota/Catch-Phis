@@ -18,6 +18,7 @@ from drf_spectacular.views import (
     SpectacularAPIView,
     SpectacularSwaggerView,
 )
+from django.conf import settings
 from django.contrib import admin
 from django.urls import path,include
 
@@ -27,5 +28,10 @@ urlpatterns = [
     path('api/docs/',SpectacularSwaggerView.as_view(url_name='api-schema'),name='api-docs'),
     path('api/user/',include("user.urls")),
     path('api/corporate/',include('corporate.urls')),
-    path('api/payment/',include('payment.urls'))
+    path('api/payment/',include('payment.urls')),
+    path('api/predict/',include('prediction.urls')),
+    path('api/acl/',include('access_control_list.urls'))
 ]
+
+if settings.DEBUG:
+    urlpatterns += [path('silk/', include('silk.urls', namespace='silk'))]

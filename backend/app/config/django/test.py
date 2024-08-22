@@ -1,5 +1,11 @@
 from .base import *
 
+ALLOWED_HOSTS = ['*']
+
+INSTALLED_APPS.append('silk')
+
+MIDDLEWARE.append('silk.middleware.SilkyMiddleware')
+
 DATABASES = {
     'default': {
         'ENGINE' : "django.db.backends.postgresql",
@@ -26,9 +32,6 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:5500",
     "https://asp-adequate-tortoise.ngrok-free.app"
 ]
-
-CELERY_BROKER_URL = env("CELERY_BROKER", default="amqp://devuser:changeme@rabbitmq:5672/")
-CELERY_RESULT_BACKEND = env("CELERY_BACKEND", default="rpc://")
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = env("host",default="")

@@ -5,6 +5,7 @@ from django.contrib.auth.models import (
     AbstractBaseUser,
     PermissionsMixin
 )
+import uuid
 
 class UserManager(BaseUserManager):
     def create_user(self,email, password=None, **extra_fields):
@@ -40,6 +41,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     account_type = models.CharField(max_length=9,choices=ACCOUNT_TYPE_CHOICES,default='personal')
     parent_user = models.ForeignKey('self', null=True, default=None, on_delete=models.CASCADE)
+    extension_token = models.UUIDField(default=uuid.uuid4, editable=False, unique=True,db_index=True)
+    extension_validator = models.CharField(default=None,null=True)
 
     objects = UserManager()
 

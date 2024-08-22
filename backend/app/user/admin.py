@@ -16,7 +16,9 @@ class UserAdmin(BaseUserAdmin):
                 'email',
                 'password',
                 'account_type',
-                'parent_user'
+                'parent_user',
+                'extension_token',
+                'extension_validator'
                 )}),
         (
             _('Permissions'),
@@ -30,7 +32,7 @@ class UserAdmin(BaseUserAdmin):
         ),
         (_('Important dates'),{'fields':('last_login',)}),
     )
-    readonly_fields = ['last_login']
+    readonly_fields = ['last_login','extension_token']
     add_fieldsets = (
         (None,{
             'classes':('wide',),
