@@ -89,7 +89,7 @@ class UserDetailsSerializer(serializers.ModelSerializer):
     """Serializer with all user details"""
     class Meta:
         model = get_user_model()
-        fields = ["id","last_login","is_superuser","first_name","last_name","phone","email","is_active","is_staff","is_superuser",'account_type','parent_user','extension_token']
+        fields = ["id","last_login","is_superuser","first_name","last_name","phone","email","is_active",'account_type','parent_user','extension_token']
         extra_kwargs = {'password': 
                         {'write_only':True,'min_length':5}
                         }
