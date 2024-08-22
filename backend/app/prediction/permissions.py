@@ -12,7 +12,7 @@ class AdminUserStatsPermission(BasePermission):
                     raise PermissionDenied({"detail":"User is not admin."})
                 if(user.corporate_details.activated==False):
                     raise PermissionDenied({"detail":"Corporate Not Activated."})
-                if(user.corporate_details.subscription_expires_at<date.today()):
+                if(not user.corporate_details.subscription_expires_at or user.corporate_details.subscription_expires_at<date.today()):
                     raise PermissionDenied({"detail":"Corporate Subscription Expired."})
                 return True
             raise PermissionDenied({"detail":"User type is not corporate."})
