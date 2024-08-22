@@ -6,7 +6,8 @@ from rest_framework.viewsets import GenericViewSet
 from rest_framework.mixins import (CreateModelMixin,
                                    DestroyModelMixin,
                                    UpdateModelMixin,
-                                   ListModelMixin)
+                                   ListModelMixin,
+                                   RetrieveModelMixin)
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
@@ -159,7 +160,8 @@ class CorporateUserViewSet(
     CreateModelMixin,
     DestroyModelMixin,
     UpdateModelMixin,
-    ListModelMixin
+    ListModelMixin,
+    RetrieveModelMixin
     ):
     serializer_class = CorporateUserSerializer
     permission_classes = [permissions_corporate.CorporateUserPermission]
