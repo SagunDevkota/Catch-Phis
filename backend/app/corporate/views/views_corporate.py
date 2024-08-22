@@ -1,4 +1,5 @@
 from django.core.cache import cache
+from django.db.models import Subquery
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
 from django.db import IntegrityError,transaction
@@ -167,6 +168,14 @@ class CorporateUserViewSet(
     authentication_classes = [JWTAuthentication]
     queryset = CorporateUser.objects.all()
 
+    def get_queryset(self):
+        corporate_details_subquery = CorporateUser.objects.filter(
+                user=self.request.user
+            ).values('corporate_details')
+        corporate_users_with_same_details = CorporateUser.objects.filter(
+            corporate_details=Subquery(corporate_details_subquery)
+        ).values_list("corporate_details_id",flat=True)
+        return super().get_queryset().filter(corporate_details_id__in=corporate_users_with_same_details)
     
     def get_serializer_class(self):
         if(self.action == 'create'):
