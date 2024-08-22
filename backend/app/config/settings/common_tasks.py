@@ -30,7 +30,6 @@ def update_domain():
         with the_zip.open(csv_filename) as csvfile:
             csv_reader = csv.reader(io.TextIOWrapper(csvfile, encoding='utf-8'))
             
-            # Print the first few rows
             for i, row in enumerate(csv_reader):
                 domains.append(row[1].replace("www.",""))
                 if(i==1000000):

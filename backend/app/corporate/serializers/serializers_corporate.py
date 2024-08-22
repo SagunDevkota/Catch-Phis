@@ -31,7 +31,6 @@ class CorporateDetailSerializer(serializers.ModelSerializer):
                             message=f"The activation key for {validated_data['contact_email']} is {token} and will expire in 180 seconds.",to_list=[validated_data['contact_email']])
                 return corporate_detail
         except IntegrityError as e:
-            print(e)
             raise serializers.ValidationError("An error occurred while creating the corporate user.")
 
 class CorporateUserSerializer(serializers.ModelSerializer):
