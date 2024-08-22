@@ -160,8 +160,7 @@ class CorporateUserViewSet(
     CreateModelMixin,
     DestroyModelMixin,
     UpdateModelMixin,
-    ListModelMixin,
-    RetrieveModelMixin
+    ListModelMixin
     ):
     serializer_class = CorporateUserSerializer
     permission_classes = [permissions_corporate.CorporateUserPermission]
@@ -193,3 +192,19 @@ class CorporateUserViewSet(
             except IntegrityError as e:
                 match = re.search(r'DETAIL:  (.*)', e.args[0])
                 raise ValidationError({"error":match.group(1)})
+
+    def get_object(self):
+        if(self.action=='me'):
+            user = self.get_queryset().filter(user=self.request.user).first()
+            if(user):
+                return user
+            else:
+                raise ValidationError({"detail":"Invalid User"})
+        else:
+            return super().get_object()
+
+    @action(methods=['GET'],detail=False)
+    def me(self,request,*args,**kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
