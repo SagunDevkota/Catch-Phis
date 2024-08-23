@@ -1,5 +1,4 @@
 let ErrorMessage = (props) => {
-  console.log(props.message);
   return (
     <>
       <div className="container mt-3">

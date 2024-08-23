@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { ToastUtil } from '../../../util/ToastUtil';
 import ErrorMessage from '../../../util/ErrorMessage';
 import Spinner from '../../../util/Spinner';
-// import Header from '../../layout/Header';
 import Header from '../../../layout/Header';
 import axios from 'axios';
 
@@ -49,7 +48,6 @@ const DashboardProfileUpdate = () => {
         });
       }
     };
-
     fetchData();
   }, []);
 
@@ -70,7 +68,7 @@ const DashboardProfileUpdate = () => {
     const token = localStorage.getItem('token');
     const header = {
       headers: {
-        Authorization: `Bearer ${token}`, // Attach the token in the Authorization header
+        Authorization: `Bearer ${token}`,
       },
     };
     try {
@@ -114,7 +112,6 @@ const DashboardProfileUpdate = () => {
           error: `Phone: ${error.response.data.phone}`,
         });
       }
-
       ToastUtil.displayErrorToast('Profile Update Failed!');
     }
   };
@@ -194,7 +191,11 @@ const DashboardProfileUpdate = () => {
                     <option value="corporate">Corporate</option>
                   </select>
                 </div>
+
                 <div className="m-2">
+                  <Link to={`/users/dashboard`} className="btn btn-warning m-1">
+                    <i className="bi bi-arrow-left-circle m-2"></i>Back
+                  </Link>
                   <input
                     type="submit"
                     className="btn btn-success"
