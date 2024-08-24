@@ -3,12 +3,14 @@ let Header = (props) => {
     <>
       <div className="container mt-3">
         <div className="row">
-          <div className="col-sm-6 text-start">
+          <div className="col-sm-12 text-start">
             <p className={`h3 ${props.color}`}>{props.heading}</p>
             <p className="fst-italic">
-              Lorem ipsum dolor sit amet, consectetur adipisicing elit. A
-              accusantium distinctio eligendi expedita illo ipsa iste mollitia
-              necessitatibus
+              Welcome to CatchPhis, your ultimate tool for safeguarding against
+              online threats. Our advanced web app analyzes and predicts
+              phishing risks for any website, helping you stay one step ahead of
+              cyber threats and protect your sensitive information with
+              confidence.
             </p>
           </div>
         </div>

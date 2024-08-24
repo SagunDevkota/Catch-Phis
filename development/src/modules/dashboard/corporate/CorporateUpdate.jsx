@@ -6,19 +6,16 @@ import Spinner from '../../../util/Spinner';
 import Header from '../../../layout/Header';
 import axios from 'axios';
 
-const DashboardProfileUpdate = () => {
+const CorporateUpdate = () => {
   const serverUrl = process.env.REACT_APP_CATCHPHIS_SERVER_URL;
 
   const [state, setState] = useState({
     loading: false,
     error: '',
     user: {
-      email: '',
-      first_name: '',
-      last_name: '',
-      phone: '',
-      password: '',
-      account_type: '',
+      company_name: '',
+      contact_email: '',
+      contact_phone: '',
     },
   });
 
@@ -29,15 +26,18 @@ const DashboardProfileUpdate = () => {
       const token = localStorage.getItem('token');
       try {
         setState({ ...state, loading: true });
-        const response = await axios.get(`${serverUrl}/api/user/profile/`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        if (response.data) {
+        const response = await axios.get(
+          `${serverUrl}/api/corporate/corporate/detail/`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        if (response.data[0]) {
           setState({
             ...state,
-            user: response.data,
+            corporate: response.data[0],
           });
         }
       } catch (err) {
@@ -48,16 +48,17 @@ const DashboardProfileUpdate = () => {
         });
       }
     };
+
     fetchData();
   }, []);
 
-  let { loading, error, user } = state;
+  let { loading, error, corporate } = state;
 
   const updateUserinput = (event) => {
     setState({
       ...state,
-      user: {
-        ...state.user,
+      corporate: {
+        ...state.corporate,
         [event.target.name]: event.target.value,
       },
     });
@@ -71,48 +72,38 @@ const DashboardProfileUpdate = () => {
         Authorization: `Bearer ${token}`,
       },
     };
+
+    const id = state.corporate.id;
     try {
       const response = await axios.put(
-        `${serverUrl}/api/user/profile/`,
-        state.user,
+        `${serverUrl}/api/corporate/corporate/detail/${id}/`,
+        state.corporate,
         header
       );
       if (response.data) {
         navigate('/users/dashboard');
-        ToastUtil.displaySuccessToast('Profile updated');
+        ToastUtil.displaySuccessToast('Company updated');
       }
     } catch (error) {
-      if (error.response.data.password) {
+      if (error.response.data.company_name) {
         setState({
           ...state,
-          error: 'Check Password Field!',
+          error: 'Check Company name Field!',
         });
       }
-      if (error.response.data.first_name) {
+      if (error.response.data.contact_email) {
         setState({
           ...state,
-          error: `First Name: ${error.response.data.first_name}`,
+          error: `Email: ${error.response.data.contact_email}`,
         });
       }
-      if (error.response.data.last_name) {
+      if (error.response.data.contact_phone) {
         setState({
           ...state,
-          error: `Last Name: ${error.response.data.last_name}`,
+          error: `Phone: ${error.response.data.contact_phone}`,
         });
       }
-      if (error.response.data.email) {
-        setState({
-          ...state,
-          error: `Email: ${error.response.data.email}`.join(', '),
-        });
-      }
-      if (error.response.data.phone) {
-        setState({
-          ...state,
-          error: `Phone: ${error.response.data.phone}`,
-        });
-      }
-      ToastUtil.displayErrorToast('Profile Update Failed!');
+      ToastUtil.displayErrorToast('Corporate Update Failed!');
     }
   };
 
@@ -120,18 +111,28 @@ const DashboardProfileUpdate = () => {
     <>
       {loading && <Spinner />}
 
-      <Header heading={'Catch-Phis Update Profile'} color={'text-success'} />
+      <Header heading={'Update Corporate'} color={'text-success'} />
 
-      {user && (
+      {corporate && (
         <div className="container mt-5">
           <div className="row">
             <div className="col-sm-4">
               <form onSubmit={(e) => handleSubmit(e)}>
                 <div className="m-2">
                   <input
+                    type="text"
+                    value={corporate.company_name}
+                    name={'company_name'}
+                    className="form-control"
+                    placeholder="Company Name"
+                    onChange={(e) => updateUserinput(e)}
+                  />
+                </div>
+                <div className="m-2">
+                  <input
                     type="email"
-                    value={user.email}
-                    name={'email'}
+                    value={corporate.contact_email}
+                    name={'contact_email'}
                     className="form-control"
                     placeholder="Email"
                     onChange={(e) => updateUserinput(e)}
@@ -139,59 +140,14 @@ const DashboardProfileUpdate = () => {
                 </div>
                 <div className="m-2">
                   <input
-                    type="text"
-                    value={user.first_name}
-                    name={'first_name'}
-                    className="form-control"
-                    placeholder="First Name"
-                    onChange={(e) => updateUserinput(e)}
-                  />
-                </div>
-                <div className="m-2">
-                  <input
-                    type="text"
-                    value={user.last_name}
-                    name={'last_name'}
-                    className="form-control"
-                    placeholder="Last Name"
-                    onChange={(e) => updateUserinput(e)}
-                  />
-                </div>
-                <div className="m-2">
-                  <input
                     type="number"
-                    value={user.phone}
-                    name={'phone'}
+                    value={corporate.contact_phone}
+                    name={'contact_phone'}
                     className="form-control"
                     placeholder="Phone "
                     onChange={(e) => updateUserinput(e)}
                   />
                 </div>
-                <div className="m-2">
-                  <input
-                    type="password"
-                    value={user.password}
-                    name={'password'}
-                    className="form-control"
-                    placeholder="Password"
-                    onChange={(e) => updateUserinput(e)}
-                  />
-                </div>
-                <div className="m-2">
-                  <select
-                    value={user.account_type}
-                    name={'account_type'}
-                    className="form-select"
-                    aria-label="Default select example"
-                    onChange={(e) => updateUserinput(e)}
-                    required
-                  >
-                    <option value="">Select Account Type</option>
-                    <option value="personal">Personal</option>
-                    <option value="corporate">Corporate</option>
-                  </select>
-                </div>
-
                 <div className="m-2">
                   <Link to={`/users/dashboard`} className="btn btn-warning m-1">
                     <i className="bi bi-arrow-left-circle m-2"></i>Back
@@ -214,4 +170,4 @@ const DashboardProfileUpdate = () => {
     </>
   );
 };
-export default DashboardProfileUpdate;
+export default CorporateUpdate;

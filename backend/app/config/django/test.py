@@ -8,11 +8,11 @@ MIDDLEWARE.append('silk.middleware.SilkyMiddleware')
 
 DATABASES = {
     'default': {
-        'ENGINE' : "django.db.backends.postgresql",
-        'HOST' : os.environ.get("POSTGRES_HOST"),
-        'NAME' : os.environ.get("POSTGRES_DB"),
-        'USER' : os.environ.get("POSTGRES_USER"),
-        'PASSWORD' : os.environ.get("POSTGRES_PASSWORD"),
+        'ENGINE': "django.db.backends.postgresql",
+        'HOST': os.environ.get("POSTGRES_HOST"),
+        'NAME': os.environ.get("POSTGRES_DB"),
+        'USER': os.environ.get("POSTGRES_USER"),
+        'PASSWORD': os.environ.get("POSTGRES_PASSWORD"),
         'TIME_ZONE': 'Asia/Kathmandu',
         'CONN_MAX_AGE': 600,
     },
@@ -34,11 +34,11 @@ CORS_ALLOWED_ORIGINS = [
 ]
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = env("host",default="")
+EMAIL_HOST = env("host", default="")
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = env("email",default="")
-EMAIL_HOST_PASSWORD = env("password",default="")
+EMAIL_HOST_USER = env("email", default="")
+EMAIL_HOST_PASSWORD = env("password", default="")
 
 STRIPE_SECRET_KEY = env('STRIPE_SECRET_KEY')
 STRIPE_WEBHOOK_SECRET = env('STRIPE_WEBHOOK_SECRET')
