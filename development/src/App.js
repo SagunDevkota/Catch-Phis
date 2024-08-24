@@ -14,6 +14,13 @@ import CorporateUpdate from './modules/dashboard/corporate/CorporateUpdate';
 import CorporateAdmin from './modules/dashboard/corporate/CorporateAdmin';
 import CorporateUserRegister from './modules/dashboard/corporate/users/CorporateUserRegister';
 import CorporateUserUpdate from './modules/dashboard/corporate/users/CorporateUserUpdate';
+import Corporate from './modules/users/components/Corporate';
+import CorporateUsers from './modules/users/components/CorporateUsers';
+import DashboardStats from './modules/users/components/DashboardStats';
+import Post from './modules/users/components/Post';
+import Acl from './modules/users/components/Acl';
+import Payment from './modules/users/components/Payment';
+import Finish from './modules/users/components/Finish';
 
 function App() {
   return (
@@ -68,6 +75,13 @@ function App() {
             path={'/users/dashboard/corporate/users/:id'}
             element={<CorporateUserUpdate />}
           />
+          <Route path={'/users/corporate'} element={<Corporate />} />
+          <Route path={'/users/corporate-user'} element={<CorporateUsers />} />
+          <Route path={'/users/stats'} element={<DashboardStats />} />
+          <Route path={'/users/post'} element={<Post />} />
+          <Route path={'/users/payment'} element={<Payment />} />
+          <Route path={'/users/finish'} element={<Finish />} />
+          <Route path={'/users/acl'} element={<Acl />} />
         </Routes>
       </div>
     </BrowserRouter>

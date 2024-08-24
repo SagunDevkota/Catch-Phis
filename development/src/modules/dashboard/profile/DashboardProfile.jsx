@@ -5,6 +5,7 @@ import ErrorMessage from '../../../util/ErrorMessage';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
 import { ToastUtil } from '../../../util/ToastUtil';
+import { useNavigate } from 'react-router-dom';
 
 const DashboardProfile = () => {
   const serverUrl = process.env.REACT_APP_CATCHPHIS_SERVER_URL;
@@ -39,6 +40,11 @@ const DashboardProfile = () => {
       ErrorMessage('Error deleting corporate details:', error);
       ToastUtil.displayErrorToast('Error deleting corporate details.');
     }
+  };
+
+  const navigate = useNavigate();
+  const handleSubscription = () => {
+    navigate('/users/payment');
   };
 
   useEffect(() => {
@@ -254,6 +260,18 @@ const DashboardProfile = () => {
                               {data.activated ? 'YES' : 'NO'}
                             </span>
                           </li>
+                          <li className="list-group-item">
+                            Subscribed:{' '}
+                            <span className="fw-bold">
+                              {data.subscribed ? 'YES' : 'NO'}
+                            </span>
+                          </li>
+                          <li className="list-group-item">
+                            Subscription ends at:{' '}
+                            <span className="fw-bold">
+                              {data.subscription_expires_at}
+                            </span>
+                          </li>
                         </ul>
                       </div>
                       <div className="col-sm-2 d-flex flex-column align-items-center justify-content-around">
@@ -269,6 +287,11 @@ const DashboardProfile = () => {
                             onClick={() => handleDelete(companyData[0].id)}
                           ></i>
                         </button>
+                        {!data.subscribed && (
+                          <button className="btn btn-danger mt-1" onClick={handleSubscription}>
+                            <i className="bi bi-stripe"></i>
+                          </button>
+                        )}
                       </div>
                     </div>
                   </div>

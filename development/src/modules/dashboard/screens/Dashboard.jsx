@@ -3,7 +3,8 @@ import DashboardHome from './DashboardHome';
 import DashboardProfile from '../profile/DashboardProfile';
 import DashboardLogout from './DashboardLogout';
 import { useNavigate } from 'react-router-dom';
-
+import DashboardStats from '../../users/components/DashboardStats';
+import Acl from '../../users/components/Acl';
 const Dashboard = () => {
   const [selectedOption, setSelectedOption] = useState('home');
   const navigate = useNavigate();
@@ -16,6 +17,10 @@ const Dashboard = () => {
         return <DashboardProfile />;
       case 'logout':
         return <DashboardLogout logout={navigateToRoot} />;
+        case 'live':
+          return <DashboardStats />;
+        case 'website':
+          return <Acl />;
       default:
         return <DashboardHome />;
     }
@@ -66,7 +71,7 @@ const Dashboard = () => {
                 onClick={() => setSelectedOption('website')}
               >
                 <i className="bi bi-filter-circle-fill m-2"></i>
-                Filtered Website
+                Access Control List
               </li>
               <li
                 className={`list-group-item py-4 ${
