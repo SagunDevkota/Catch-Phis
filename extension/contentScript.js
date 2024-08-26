@@ -16,11 +16,11 @@ chrome.runtime.onMessage.addListener(async function(message, sender, sendRespons
         data['has_social_media_links'] = has_social_media_links()
         data['has_description'] = has_description()
         data['has_external_form_submit'] = has_external_form_submit()
-        data['iframe'] = iframe()
+        //data['iframe'] = iframe()
         data['has_hidden_field'] = has_hidden_field()
-        data['has_password_field'] = has_password_field()
-        data['no_of_images'] = no_of_images()
-        data['no_of_css'] = no_of_css()
+        //data['has_password_field'] = has_password_field()
+        //data['no_of_images'] = no_of_images()
+        //data['no_of_css'] = no_of_css()
         data['no_of_js'] = no_of_js()
         data['no_of_self_ref'] = no_of_self_ref()
         chrome.storage.local.set({tracking:data})
@@ -28,18 +28,31 @@ chrome.runtime.onMessage.addListener(async function(message, sender, sendRespons
         if(p['svc_pca']===0 || p['xgboost_pca']===0){
           const card = document.createElement('div');
           card.style.position = 'fixed';
-          card.style.top = '10px';
-          card.style.right = '10px';
-          card.style.width = '200px';
-          card.style.padding = '20px';
-          card.style.backgroundColor = 'red';
-          card.style.color = 'white';
-          card.style.boxShadow = '0px 0px 10px rgba(0,0,0,0.5)';
-          card.style.zIndex = '1000';
+          card.style.top = '20px';
+          card.style.right = '20px';
+          card.style.width = '250px';
+          card.style.padding = '15px';
+          card.style.backgroundColor = '#f44336'; // A more subtle red
+          card.style.color = '#ffffff'; // White text for contrast
+          card.style.fontFamily = 'Arial, sans-serif';
+          card.style.fontSize = '14px';
+          card.style.borderRadius = '8px'; // Rounded corners for a modern look
+          card.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.1), 0 6px 20px rgba(0, 0, 0, 0.19)'; // Softer shadow
+          card.style.zIndex = '9999999999';
           card.innerHTML = `
-            <div>
-              <p>This website might be harmful</p>
-              <button id="closeCard" style="position: absolute;right: 6px;top: 1px;">X</button>
+            <div style="display: flex; align-items: center;">
+              <p style="margin: 0; flex: 1;">⚠️ This website might be harmful</p>
+              <button id="closeCard" style="
+                background: none;
+                border: none;
+                color: #ffffff;
+                font-weight: bold;
+                font-size: 16px;
+                cursor: pointer;
+                padding: 0;
+                margin-left: 10px;
+                transition: color 0.3s;
+              ">✖</button>
             </div>
           `;
 
