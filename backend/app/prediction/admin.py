@@ -2,7 +2,7 @@ from django.contrib import admin
 from .models import PredictionLog,UserWebsiteInteraction,LegitDomain
 
 class PredictionLogAdmin(admin.ModelAdmin):
-    list_display = ['id','domain','svc_pca','xgboost_pca']
+    list_display = ['id','domain','svc_pca','xgboost_pca','corrected_output']
 
 class WebsiteInteractionAdmin(admin.ModelAdmin):
     list_display = ['name','website_log','interaction_datetime']
