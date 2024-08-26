@@ -26,11 +26,6 @@ This project is a phishing detection system designed to identify and flag potent
 - **Docker**: Containerization for consistent development environments.
 
 ## Installation 
-### Prerequisites
-Python 3.10 or higher
-pip (Python package installer)
-Virtualenv (optional but recommended)
-
 ## Steps
 
 1. Clone the repository
