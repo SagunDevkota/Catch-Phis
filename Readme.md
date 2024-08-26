@@ -13,17 +13,17 @@ This project is a phishing detection system designed to identify and flag potent
 * Payment Integration: Integrate Stripe payment gateway for corporate subscription management.
 
 ## Technologies Used
-Django: For the backend framework.
-Python: Programming language used for development.
-Scikit-learn / xgboost : For machine learning algorithms.
-PostgreSQL: Database for storing user data and analysis results.
-React js: JavaScript library for building dynamic user interfaces.
-Git/Github: Version control and repository management.
-Rabbit Mq: Message broker for task communication.
-Celery: For asynchronous task processing.
-Redis: In-memory data structure store for caching.
-Nginx: Reverse proxy server for handling requests.
-Docker: Containerization for consistent development environments.
+- **Django**: For the backend framework.
+- **Python**: Programming language used for development.
+- **Scikit**-learn / xgboost : For machine learning algorithms.
+- **PostgreSQL**: Database for storing user data and analysis results.
+- **React** js: JavaScript library for building dynamic user interfaces.
+- **Git**/Github: Version control and repository management.
+- **Rabbit** Mq: Message broker for task communication.
+- **Celery**: For asynchronous task processing.
+- **Redis**: In-memory data structure store for caching.
+- **Nginx**: Reverse proxy server for handling requests.
+- **Docker**: Containerization for consistent development environments.
 
 ## Installation 
 ### Prerequisites
