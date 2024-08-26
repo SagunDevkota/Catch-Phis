@@ -169,3 +169,5 @@ MODELS = {"svc_pca":joblib.load(os.path.join(BASE_DIR,'models','full_pipeline_sv
 
 CELERY_BROKER_URL = env("CELERY_BROKER", default="amqp://devuser:changeme@rabbitmq:5672/")
 CELERY_RESULT_BACKEND = env("CELERY_BACKEND", default="rpc://")
+
+FINISH_URL = env("FINISH_URL")

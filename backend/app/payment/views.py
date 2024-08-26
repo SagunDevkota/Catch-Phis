@@ -55,7 +55,7 @@ class CorporateCreateCheckoutAPIView(ViewSet):
             ],
             mode='subscription',
             customer_email=email,
-            return_url=request.scheme+"://"+request.get_host() + '/return.html?session_id={CHECKOUT_SESSION_ID}',
+            return_url=settings.FINISH_URL+'?session_id={CHECKOUT_SESSION_ID}',
         )
     
     @action(methods=["post"],detail=False,url_path='create-checkout-session')
