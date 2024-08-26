@@ -73,5 +73,4 @@ class StatsViewSet(GenericViewSet,ListModelMixin):
         OpenApiParameter(name='admin',type=bool,description="Is corporate admin trying to view stats of organization?")
         ])
     def list(self, request, *args, **kwargs):
-        print(self.get_queryset())
         return super().list(request, *args, **kwargs)

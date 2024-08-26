@@ -16,28 +16,11 @@ class Analyze:
 
     def __url_length(self):
         return len(self.data['url'])
-    
-    def __domain_length(self):
-        return len(self.domain)
-    
-    def __is_domain_ip(self):
-        parts = self.domain.split('.')
-        if len(parts) == 4 and all(part.__isdigit() for part in parts):
-            return 1
-        else:
-            return 0
 
     def __no_of_subdomain(self):
         if(str(self.domain).startswith("www.")):
             return len(self.domain[4:].split("."))-1
         return len(self.domain.split("."))-1
-    
-    def __no_of_letters_in_url(self):
-        unique_chars = set(self.data['url'])
-        return len(unique_chars)
-
-    def __letter_ratio_in_url(self):
-        return format(self.__no_of_letters_in_url()/self.__url_length(),'.3f')
     
     def __no_of_digits_in_url(self):
         count = 0
@@ -121,18 +104,8 @@ class Analyze:
 
     def result(self,predictions=False):
         similar = LegitDomain.search_similar(self.domain).first()
-        self.data['url_length'] = self.__url_length()
-        self.data['domain_length'] = self.__domain_length()
-        self.data['is_domain_ip'] = self.__is_domain_ip()
         self.data['no_of_subdomain'] = self.__no_of_subdomain()
-        self.data['no_of_letters_in_url'] = self.__no_of_letters_in_url()
-        self.data['letter_ratio_in_url'] = self.__letter_ratio_in_url()
-        self.data['no_of_digits_in_url'] = self.__no_of_digits_in_url()
         self.data['digit_ratio_in_url'] = self.__digit_ratio_in_url()
-        self.data['no_of_equal_in_url'] = self.__no_of_equal_in_url()
-        self.data['no_of_question_mark_in_url'] = self.__no_of_question_mark_in_url()
-        self.data['no_of_ampersand_in_url'] = self.__no_of_ampersand_in_url()
-        self.data['no_of_other_special_char_in_url'] = self.__no_of_other_special_char_in_url()
         self.data['special_char_symbol_ratio_in_url'] = self.__special_char_symbol_ratio_in_url()
         self.data['has_https'] = self.__has_https()
         self.data['has_robots'] = self.__has_robots()

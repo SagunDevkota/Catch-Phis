@@ -33,11 +33,7 @@ def create_prediction(user):
         "has_social_media_links": 0,
         "has_description": 1,
         "has_external_form_submit": 0,
-        "iframe": 2,
         "has_hidden_field": 0,
-        "has_password_field": 0,
-        "no_of_images": 79,
-        "no_of_css": 6,
         "no_of_js": 0,
         "no_of_self_ref": 191
     }
@@ -70,7 +66,7 @@ class PrivateStats(TestCase):
         create_prediction(user=user)
         res = self.client.get(TOKEN_EXTENSION_VALIDATOR)
         self.assertEqual(res.status_code,status.HTTP_200_OK)
-        self.assertEqual(res.json()['results'],[{'is_legit': 1, 'total': 1}])
+        self.assertEqual(res.json()['results'],[{'legit': 1, 'total': 1}])
 
     def test_get_prediction_stats_admin_no_corporate_detail(self):
         """get stats for a corporate account without registered corporate details."""
@@ -141,4 +137,4 @@ class PrivateStats(TestCase):
         create_corporate(user=user,**params)
         res = self.client.get(TOKEN_EXTENSION_VALIDATOR+"?admin=true")
         self.assertEqual(res.status_code,status.HTTP_200_OK)
-        self.assertEqual(res.json()['results'],[{'user': {'first_name': 'John', 'last_name': 'Doe', 'email': 'user@example.com'}, 'is_legit': 1, 'total': 1}])
+        self.assertEqual(res.json()['results'],[{'user': {'first_name': 'John', 'last_name': 'Doe', 'email': 'user@example.com'}, 'legit': 1, 'total': 1}])

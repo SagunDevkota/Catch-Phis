@@ -18,7 +18,7 @@ class LegitDomain(models.Model):
     domain = models.CharField(max_length=255,default=None,null=True,unique=True)
 
     @classmethod
-    def search_similar(cls, query: str, similarity_threshold=0.3):
+    def search_similar(cls, query: str, similarity_threshold=0.4):
         """Return the list of similay domains based on a query
 
         Args:
@@ -36,43 +36,29 @@ class LegitDomain(models.Model):
         return self.domain
 
 class PredictionLog(models.Model):
-    url = models.CharField(max_length=255, null=False)
-    favicon = models.IntegerField(null=False)
-    has_title = models.IntegerField(null=False)
-    title = models.CharField(max_length=255, null=False)
-    has_copyright_info = models.IntegerField(null=False)
-    has_social_media_links = models.IntegerField(null=False)
-    has_description = models.IntegerField(null=False)
-    has_external_form_submit = models.IntegerField(null=False)
-    iframe = models.IntegerField(null=False)
-    has_hidden_field = models.IntegerField(null=False)
-    has_password_field = models.IntegerField(null=False)
-    no_of_images = models.IntegerField(null=False)
-    no_of_css = models.IntegerField(null=False)
-    no_of_js = models.IntegerField(null=False)
-    no_of_self_ref = models.IntegerField(null=False)
-    url_length = models.IntegerField(null=False)
-    domain_length = models.IntegerField(null=False)
-    is_domain_ip = models.IntegerField(null=False)
-    no_of_subdomain = models.IntegerField(null=False)
-    no_of_letters_in_url = models.IntegerField(null=False)
-    letter_ratio_in_url = models.FloatField(null=False)
-    no_of_digits_in_url = models.IntegerField(null=False)
-    digit_ratio_in_url = models.FloatField(null=False)
-    no_of_equal_in_url = models.IntegerField(null=False)
-    no_of_question_mark_in_url = models.IntegerField(null=False)
-    no_of_ampersand_in_url = models.IntegerField(null=False)
-    no_of_other_special_char_in_url = models.IntegerField(null=False)
-    special_char_symbol_ratio_in_url = models.FloatField(null=False)
-    has_https = models.IntegerField(null=False)
-    has_robots = models.IntegerField(null=False)
-    domain_title_match_score = models.FloatField(null=False)
-    url_similarity_index = models.IntegerField(null=False)
-    char_continuous_rate = models.FloatField(null=False)
-    domain = models.CharField(max_length=255, null=False, unique=True)
-    svc_pca = models.IntegerField(null=False)
-    xgboost_pca = models.IntegerField(null=False)
-    corrected_output = models.IntegerField(null=True, blank=True)
+    url = models.CharField(max_length=255, null=False) #yes
+    favicon = models.IntegerField(null=False) #yes
+    has_title = models.IntegerField(null=False) #yes
+    title = models.CharField(max_length=255, null=False, blank=True) #yes
+    has_copyright_info = models.IntegerField(null=False) #yes
+    has_social_media_links = models.IntegerField(null=False) #yes
+    has_description = models.IntegerField(null=False) #yes
+    has_external_form_submit = models.IntegerField(null=False) #yes
+    has_hidden_field = models.IntegerField(null=False) #yes
+    no_of_js = models.IntegerField(null=False) #yes
+    no_of_self_ref = models.IntegerField(null=False) #yes
+    no_of_subdomain = models.IntegerField(null=False) #yes
+    digit_ratio_in_url = models.FloatField(null=False) #yes
+    special_char_symbol_ratio_in_url = models.FloatField(null=False) #yes
+    has_https = models.IntegerField(null=False) #yes
+    has_robots = models.IntegerField(null=False) #yes
+    domain_title_match_score = models.FloatField(null=False) #yes
+    url_similarity_index = models.IntegerField(null=False) #yes
+    char_continuous_rate = models.FloatField(null=False) #yes
+    domain = models.CharField(max_length=255, null=False, unique=True) #yes
+    svc_pca = models.IntegerField(null=False) #yes
+    xgboost_pca = models.IntegerField(null=False) #yes
+    corrected_output = models.IntegerField(null=True, blank=True) #yes
 
     def __str__(self) -> str:
         return self.domain
