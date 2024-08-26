@@ -9,7 +9,6 @@ config.py
 .dockerignore
 */*/*/migrations/*.py
 !*/*/*/migrations/__init__.py
-*.joblib
 backend/app/staticfiles/
 
 celerybeat-schedule.*
