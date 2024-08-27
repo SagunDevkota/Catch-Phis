@@ -11,6 +11,7 @@ This project is a phishing detection system designed to identify and flag potent
 * Access Control List Management: Allow manual addition of domains to the Access Control List, enabling users to classify domains as either whitelisted or blacklisted.
 * Verified Domains Repository: Maintain a monthly updated repository of verified domains to ensure an accurate and current list of legitimate domains.
 * Payment Integration: Integrate Stripe payment gateway for corporate subscription management.
+* Browser Extension: Deploy a Chromium-based browser extension for real-time phishing detection and prevention.
 
 ## Technologies Used
 - **Django**: For the backend framework.
